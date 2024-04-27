@@ -6,7 +6,7 @@ The release contains the New MAME (1.0.3a) binary with full - 40 & 80 column sup
 
 It also contains the NABU Internet Adapter (NIA) (c) DJ Sures running as a background process. All Thanks to DJ for the expansions to NIA he has done for us to make this possible.
 
-So, it’s an "all-in-one" headless solution for portable NABU play from the nabau.ca retronet network.
+So, it’s an "all-in-one" headless solution for portable NABU play from the nabu.ca retronet network.
 
 This is a Linux 64bit Build - targeted at the Steam Deck - It should run on my most other modern Linux distros.
 
