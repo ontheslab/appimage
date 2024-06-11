@@ -20,7 +20,10 @@ MAME configuration files are stored in your “user home” folder under “~/.m
 Screen captures are saved to the “user home” – “Pictures” folder under “~/Pictures/nabupc”
 NABU Internet Adapter and its files are installed in your “user home” – “Documents” folder under “~/Documents/NABU Internet Adapter”
 These folders will be re-created if deleted (default configuration). Configuration files in these locations can be edited if required.
+
 The installed “NABU Internet Adapter” can be upgrade by dropping the new version binary in the “~/Documents/NABU Internet Adapter” folder.
+
+UPDATE - "Drag-and-Drop" upgrade of the NIA works a treat and is highly recommended as the "included" version contains a CPU process bug that slows things down.
 
 "AppImage" = self-contained executable container - all required libraries included.
 
