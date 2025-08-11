@@ -1,5 +1,14 @@
 "AppImage" build of NABUPC MAME
-Calling it v1.0.3 to bring it inline with my other Linux Builds.
+
+Updated to v1.0.4 to bring it inline with my other Linux Builds.
+
+New:
+
+Contains the latest "linux" binary incorporating gtamps most recent updates.
+A couple of script updates to fix issues with relocating existing screen shots to the new "Pictures" folder.
+Also attempts to remove the old snaps folder.
+
+Previous:
 
 The release contains the New binary with full - 40 & 80 column support via command line options
 
