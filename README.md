@@ -2,7 +2,7 @@
 
 ## NABU PC MAME AppImage Builds that include NABU NetSim (NNS) or NABU Internet Adapter (NIA) for Steam Deck
 
-These programs are an **"AppImage"** = self-contained 64bit Linux x86 executable container - all required libraries included (should be). The goal to make **NABU PC MAME (r0.250)** easier to run on the Linux platform - in particular the **"Steam Deck"**.
+These programs are an **"AppImage"** = self-contained 64bit Linux x86 executable container - all required libraries included (should be). The goal was to make **NABU PC MAME (r0.250)** easier to run on the Linux platform - in particular the **"Steam Deck"**.
 
 ### Notes - Draft Instructions:
 
