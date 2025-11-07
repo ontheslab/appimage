@@ -109,7 +109,7 @@ __**__ **Special Notes relating to the inbuilt servers**
 The **NIA** config file **(config.xml)** is located here: **"~/Documents/NABU Internet Adapter/config.xml"**
 
 
-__**__ **AppImage Upgrade Informatio**
+__**__ **AppImage Upgrade Information**
 
 If you have run any of my older AppImages I would suggest - resetting the config files first (old files are saved).
 
