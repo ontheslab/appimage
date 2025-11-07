@@ -154,7 +154,7 @@ In the following examples **"NABUPcNxx.AppImage"** refers to _**"both"**_ - **NA
 
 **Operational examples (base machine only with debug):**
 
-__**__ Replace "xx" with "ns" or "ia" etc
+__**__ Replace **"xx"** with **"ns"** or **"ia"** etc & _**"--debug"**_ is **NOT** required.
 
 **Vectrex** - ./NABUPcNxx.AppImage --nonxx --debug vectrex  -window -rompath ~/.mamedata/roms
 
@@ -174,6 +174,12 @@ __**__ These examples use NNS or NIA for clarity but are interchangeable as abov
 **./NABUPcNNS.AppImage --nonns --debug vectrex  -window -rompath ~/.mamedata/roms -cart ~/Documents/vectrex/FROGGER.BIN**
 
 This command will run the Vectrex (vectrex) and load the "cart" Frogger.
+
+_Don't forget, the base rom includes a classic game!_
+
+**./NABUPcNNS.AppImage --nonns --debug vectrex  -window -rompath ~/.mamedata/roms**
+
+This will boot up the base, built-in Game.
 
 **CoCo3:**
 
@@ -222,4 +228,4 @@ The **"alpha"** builds contain the most up-to-date config files: https://github.
 
 Please NOTE: This is NOT well tested, it’s an experiment at present - the only thing I can guarantee is that they "will" break your system! :wink:
 
-_Doc Version 1.00_
+_Doc Version 1.01_
