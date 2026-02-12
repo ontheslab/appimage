@@ -19,10 +19,10 @@ These are Linux 64bit Builds - targeted at the **"Steam Deck"** - They should ru
 
 **Summary information (including important file locations):**
 
-- MAME configuration & other files are stored in your "user home" folder under **"~/.mamadata"**
+- MAME configuration & other files (roms etc) are stored in your "user home" folder under **"~/.mamadata"**
 - Screen captures are saved to the "user home" – "Pictures" folder under **"~/Pictures/nabupc"**
-- NABU NetSim places it's "data" files in **"~/.nns"** (Built on startup)
-- NABU Internet Adapter and its files are installed in your “user home” – “Documents” folder under **“~/Documents/NABU Internet Adapter”**
+- NABU NetSim **(NNS)** places it's "data" files in **"~/.nns"** (Built on startup)
+- NABU Internet Adapter **(NIA)** and its files are installed in your “user home” – “Documents” folder under **“~/Documents/NABU Internet Adapter”**
 - MAME is configured with stock joystick and keyboard mapping as per "GTAMP"'s Windows distribution. You will need to setup a custom controller mapping on the SteamDeck for commands such as **"ESC", "F3", "F12", "TAB"**, etc to make it easy to operate. This is easy to do from the Steam Deck menus, MAME's UI interface is now set to active by default (accessed with the **"TAB"** key).
 
 The configuration folders will be re-created if deleted (default configuration). Configuration files in these locations can be manually edited if required.
@@ -210,13 +210,22 @@ This command is more complex, it runs a CoCo3 with the following options:
 - CoCoSDC.VHD (Bootable) Hard drive image as HDD #1 (hard1)
 - __**__ example only! I'm no expert!
 
-The **"alpha"** builds contain the most up-to-date config files: https://github.com/ontheslab/appimage/releases/tag/v1.0.1alpha
+The **"alpha"** builds contain the most **up-to-date** config files: https://github.com/ontheslab/appimage/releases/tag/v1.0.1alpha
 
+---------------------------------------------------------------------------------------------------
+
+**Experimental CoCo3 FujiNet Build**
+
+First release of an experimental AppImage containing the CoCo FujiNet server. All-in-one application idea operating the same way as the NABU Images - Background server with MAME frontend.
+
+Details are on the release page: https://github.com/ontheslab/appimage/releases/tag/v1.101-coco
+
+(12/02/25)
 ---------------------------------------------------------------------------------------------------
 
 **Acknowledgements**, These AppImages contain contributions from and the very hard work of: DJ, GryBsh, GTAMP, brijohn & LaBomb. Special thanks to Leo and DJ without whom we would not be here.
 
-**Additional** CoCo thanks, henryr. for his wonderful HDD image & Nick M for his fabulous CoCo Games! 
+**Additional** CoCo thanks, The FujiNet Team, henryr. for his wonderful HDD image & Nick M for his fabulous CoCo Games! 
 
 **Reference Links:**
 - https://gtamp.com/nabu/
@@ -225,7 +234,9 @@ The **"alpha"** builds contain the most up-to-date config files: https://github.
 - https://github.com/brijohn/nabupc
 - https://github.com/labomb/NABU_PC_Stuff
 - https://github.com/linuxplayground/nabu-games
+- https://fujinet.online
+- https://github.com/FujiNetWIFI/fujinet-firmware
 
 Please NOTE: This is NOT well tested, it’s an experiment at present - the only thing I can guarantee is that they "will" break your system! :wink:
 
-_Doc Version 1.01_
+_Doc Version 1.02_
