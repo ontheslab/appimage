@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# V0.01 - Pre-Release AppImage
+# v1.00b - First full beta version
+# v1.00c - Working Tester
+# v1.00d - Added debug support
+# v1.00e - Updated for consistency with AppRun and runmame
+# v1.00f - Minor formatting and comment updates
+# v1.00g - Moved debug parsing before output
+# v1.101 - First CoCo FujiNet integration
+# v1.02  - Unified NABUPcAIO build
+
+set -e
+
+# Global variables
+app_version="1.02 - Unified NABUPcAIO"
+home_dir="$HOME"
+fuji_data_dir="$home_dir/Documents/FujiNetCoCo"
+DEBUG=false
+
+# Function to handle debug echoes
+debug_echo() {
+    if $DEBUG; then
+        echo "$@"
+    fi
+}
+
+# Parse command-line options
+for arg in "$@"; do
+    case "$arg" in
+        --debug) DEBUG=true ;;
+    esac
+done
+
+# Main script execution
+debug_echo "Running fuji script in Actual Path $PWD"
+debug_echo "Fuji Script Version: $app_version"
+debug_echo "Home Path is: $home_dir"
+debug_echo "Data Dir: $fuji_data_dir"
+
+# Run FujiNet server
+debug_echo "Changing to directory: $fuji_data_dir"
+cd "$fuji_data_dir"
+debug_echo "Running FujiNet now..."
+if $DEBUG; then
+    sh ./run-fujinet &
+else
+    sh ./run-fujinet >/dev/null &
+fi

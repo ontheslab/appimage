@@ -205,7 +205,7 @@ setup_mame() {
 
 launch_nia() {
     debug_echo "Launching NABU Internet Adapter server"
-    sh ./runserver &
+    sh ./runserver "$@" &
     sleep 10
 }
 

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# V1.00 - GryBsh
+# v1.01 - Updates for new AppImage - Intangybles
+# v1.02 - Unified NABUPcAIO build
+
+set -e
+
+# Global variables
+app_version="1.02 - Unified NABUPcAIO"
+DEBUG=false
+
+# Function to handle debug echoes
+debug_echo() {
+    if $DEBUG; then
+        echo "$@"
+    fi
+}
+
+# Parse command-line options
+for arg in "$@"; do
+    case "$arg" in
+        --debug) DEBUG=true ;;
+    esac
+done
+
+debug_echo "Running NNS script in Actual Path $PWD"
+debug_echo "NNS Script Version: $app_version"
+
+if $DEBUG; then
+    ./nns
+else
+    ./nns >/dev/null 2>&1
+fi

@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# V0.01 - Pre-Release AppImage
+# v1.00b - First full beta version
+# v1.00c - Working Tester
+# v1.00d - Added debug support
+# v1.00e - Updated for consistency with AppRun and runmame
+# v1.00f - Minor formatting and comment updates
+# v1.00g - Moved debug parsing before output
+# v1.01  - Unified NABUPcAIO build
+
+set -e
+
+# Global variables
+app_version="1.01 - Unified NABUPcAIO"
+home_dir="$HOME"
+nia_data_dir="$home_dir/Documents/NABU Internet Adapter"
+DEBUG=false
+
+# Function to handle debug echoes
+debug_echo() {
+    if $DEBUG; then
+        echo "$@"
+    fi
+}
+
+# Parse command-line options
+for arg in "$@"; do
+    case "$arg" in
+        --debug) DEBUG=true ;;
+    esac
+done
+
+# Main script execution
+debug_echo "Running NIA script in Actual Path $PWD"
+debug_echo "NIA Script Version: $app_version"
+debug_echo "Home Path is: $home_dir"
+debug_echo "Data Dir: $nia_data_dir"
+
+# Run NIA server
+debug_echo "Changing to directory: $nia_data_dir"
+cd "$nia_data_dir"
+debug_echo "Running NIA now with '-n'..."
+./NABU-Internet-Adapter-84 -n
