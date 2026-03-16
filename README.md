@@ -142,3 +142,7 @@ DJ Sures (NIA), GryBsh/Nick Daniels (NNS), GTAMP, brijohn (MAME NABU source & Co
 - [FujiNetWIFI/fujinet-firmware](https://github.com/FujiNetWIFI/fujinet-firmware)
 
 > **Note:** These builds are experimental. The only thing guaranteed is they _might_ break your system! ;-)
+
+---
+
+_This repo was tidied up and brought properly to GitHub with a little help from [Claude](https://claude.ai/code) — our first adventure together!_ 🤖
