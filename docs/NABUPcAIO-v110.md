@@ -29,7 +29,7 @@ This is a Linux 64bit Build - targeted at the Steam Deck - It should run on most
 
 _All configuration folders will be re-created if deleted (default configuration). Configuration files in these locations can be manually edited if required._
 
-_The installed **NIA** can be upgraded by dropping a new version binary into "~/Documents/NABU Internet Adapter". NNS is a fixed bundled version. FujiNet can be updated by replacing the contents of "~/Documents/FujiNetCoCo"._
+_The installed **NIA** can be upgraded by dropping a new version binary into **"~/Documents/NABU Internet Adapter"**. NNS is a fixed bundled version. FujiNet can be updated by replacing the contents of **"~/Documents/FujiNetCoCo"**._
 
 ---
 
