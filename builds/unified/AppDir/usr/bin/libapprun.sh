@@ -47,8 +47,9 @@ kill_nia() {
 
 kill_nns() {
     debug_echo "Testing for running NNS processes"
-    # [n]ns matches './nns' and 'sh ./runnns' but NOT 'NABUPcNNS.AppImage' (uppercase)
-    nns_id=$(ps aux | grep '[n]ns' | awk '{print $2}')
+    # [r]unnns matches 'sh ./runnns'; [.]/nns matches './nns'
+    # Avoids matching '--server nns' in the AppImage's own command line
+    nns_id=$(ps aux | grep -E '[r]unnns|[.]/nns' | awk '{print $2}')
     if [ -n "$nns_id" ]; then
         debug_echo "Found running NNS: $nns_id"
         kill $nns_id 2>/dev/null || true
