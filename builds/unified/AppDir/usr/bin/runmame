@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# V1.04   Release AppImage for bundled server
+# V1.04a  Window size & config update
+# V1.04b  Modularised with debug support
+# V1.04e  Moved debug parsing before output
+# V1.04f  Fixed --coleco detection logic
+# V1.05   Build for NNS AppImage - -noswitchres fix
+# V1.05a  Build for NNS AppImage - minor update
+# V1.101  Added --fuji flag and CoCo3 FujiNet default launch
+# V1.06   Unified - merged all variants, removed redundant sleep
+
+set -e
+
+# Global variables
+app_version="1.06 - Unified runmame"
+home_dir="$HOME"
+data_dir="$home_dir/.mamedata"
+DEBUG=false
+
+# Function to handle debug echoes
+debug_echo() {
+    if $DEBUG; then
+        echo "$@"
+    fi
+}
+
+# Function to set MAME options
+set_mame_options() {
+    local clean_cl coleco_flag fuji_flag
+    coleco_flag=false
+    fuji_flag=false
+
+    # Check for --coleco and --fuji flags
+    for arg in "$@"; do
+        if [[ "$arg" == "--coleco" ]]; then
+            coleco_flag=true
+        fi
+        if [[ "$arg" == "--fuji" ]]; then
+            fuji_flag=true
+        fi
+    done
+
+    # Set default MAME command based on mode
+    if $coleco_flag; then
+        # Built-in Coleco ROM collection
+        default_options="nabupc -noswitchres -resolution 1024x768 -hcca hcca_local -npz nabu/coleco.npz"
+    elif $fuji_flag; then
+        # CoCo3 with FujiNet HDB-DOS
+        default_options="coco3 -window -rompath ~/.mamedata/roms -ramsize 512k -ext multi -ext:multi:slot4 fdc -cart5 ~/.mamedata/roms/coco3/hdbdw3bc3.rom"
+    else
+        # Default NABU PC 80col via server on localhost
+        default_options="nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca null_modem -bitb socket.127.0.0.1:5816"
+    fi
+
+    # Strip all AppImage -- flags before passing to MAME
+    clean_cl=$(printf "%s\n" "$@" | grep -v '^--' | xargs)
+    debug_echo "Clean Command Line: $clean_cl"
+
+    # Use default options if no custom MAME command line supplied
+    if [ -z "$clean_cl" ]; then
+        options="-cfg_directory ${data_dir}/cfg -snapshot_directory ${home_dir}/Pictures ${default_options}"
+    else
+        options="-cfg_directory ${data_dir}/cfg -snapshot_directory ${home_dir}/Pictures ${clean_cl}"
+    fi
+}
+
+# Function to run MAME
+run_mame() {
+    debug_echo "Arguments supplied - options = $options"
+    debug_echo "Home Path is: $home_dir"
+    ./mame $options 2> /dev/null
+}
+
+# Parse command-line options
+for arg in "$@"; do
+    case "$arg" in
+        --debug) DEBUG=true ;;
+        --coleco) ;;  # Handled in set_mame_options
+        --fuji)   ;;  # Handled in set_mame_options
+    esac
+done
+
+# Main script execution
+debug_echo "Running MAME script in Actual Path $PWD"
+debug_echo "MAME Script Version: $app_version"
+
+set_mame_options "$@"
+run_mame
