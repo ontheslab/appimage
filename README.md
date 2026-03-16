@@ -11,9 +11,9 @@ Each AppImage is a self-contained executable — no installation, no external de
 | AppImage | Bundled Servers | Status |
 | -------- | --------------- | ------ |
 | **NABUPcAIO.AppImage** | NIA + NNS + CoCo FujiNet — all three in one, choose at launch | Current |
-| **NABUPcNIA.AppImage** | NABU Internet Adapter (NIA) by DJ Sures — connects to nabu.ca retronet | Current |
-| **NABUPcNNS.AppImage** | NABU NetSim (NNS) by Nick Daniels (GryBsh) — advanced local simulator | Current |
-| **NABUPcTEST.AppImage** | CoCo FujiNet server — 8-bit networking for CoCo3 via localhost | Alpha |
+| **NABUPcNIA.AppImage** | NABU Internet Adapter (NIA) by DJ Sures — connects to nabu.ca retronet | Superseded by NABUPcAIO |
+| **NABUPcNNS.AppImage** | NABU NetSim (NNS) by Nick Daniels (GryBsh) — advanced local simulator | Superseded by NABUPcAIO |
+| **NABUPcTEST.AppImage** | CoCo FujiNet server — 8-bit networking for CoCo3 via localhost | Superseded by NABUPcAIO |
 
 Download from [Releases](https://github.com/ontheslab/appimage/releases).
 

@@ -1,7 +1,7 @@
 NABU PC MAME - All-In-One (AIO) AppImage Build for Steam Deck & Linux
 ======================================================================
 
-Version 1.03 - NABUPcAIO
+Version 1.10 - NABUPcAIO
 
 The all-in-one AppImage bundles NABU PC MAME with all three supported
 servers in a single executable. Choose your server at launch with the
@@ -151,4 +151,4 @@ GTAMP, brijohn, LaBomb, Leo and the wider NABU community.
 Built with assistance from Claude (Anthropic) — our first adventure
 together in proper version-controlled NABU development.
 
-(NABUPcAIO v1.03)
+(NABUPcAIO v1.10)

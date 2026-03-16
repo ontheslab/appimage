@@ -11,7 +11,7 @@ set -e
 # Global variables
 # ---------------------------------------------------------------------------
 
-app_version="1.03 - NABUPcAIO unified AppImage"
+app_version="1.10 - NABUPcAIO unified AppImage"
 this_dir="$(readlink -f "$(dirname "$0")")"
 home_dir="$HOME"
 nia_data_dir="$home_dir/Documents/NABU Internet Adapter"
