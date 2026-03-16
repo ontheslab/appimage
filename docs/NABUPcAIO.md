@@ -150,4 +150,3 @@ This is an AppImage — a self-contained executable with all required libraries 
 This AppImage contains contributions from and the very hard work of:
 **DJ Sures** (NIA), **Nick Daniels / GryBsh** (NNS), the **FujiNet Team**, **GTAMP**, **brijohn**, **LaBomb**, **Leo** and the wider NABU community.
 
-Built with assistance from [Claude](https://claude.ai) (Anthropic) — our first adventure together in proper version-controlled NABU development.
