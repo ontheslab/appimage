@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # v1.00 — NABUPcAIO unified AppImage — initial release
+# v1.01 — Added --config flag (NIA GUI mode, NNS/FujiNet web UI)
 
 set -e
 
@@ -7,7 +8,7 @@ set -e
 # Global variables
 # ---------------------------------------------------------------------------
 
-app_version="1.00 - NABUPcAIO unified AppImage"
+app_version="1.01 - NABUPcAIO unified AppImage"
 this_dir="$(readlink -f "$(dirname "$0")")"
 home_dir="$HOME"
 nia_data_dir="$home_dir/Documents/NABU Internet Adapter"
@@ -40,6 +41,7 @@ display_help() {
     echo -e "        --nonia             Shorthand for --server none (no server)"
     echo -e "        --nonns             Shorthand for --server none (no server)"
     echo -e "        --coleco            Run built-in Coleco ROM collection (brijohn)"
+    echo -e "        --config            Open server config UI (NIA: GUI window; NNS/FujiNet: web UI)"
     echo -e "        --reset             Reset all configs to defaults and exit (backs up to .old)"
     echo -e "        --debug             Enable debug output"
     echo -e "        --about             Display the bundled readme\n"
@@ -73,6 +75,7 @@ for arg in "$@"; do
         --fuji)   SERVER="fuji" ;;
         --nonia)  SERVER="none" ;;
         --nonns)  SERVER="none" ;;
+        --config) ;;  # passed through to launch functions
         --coleco) ;;  # passed through to runmame
     esac
 done

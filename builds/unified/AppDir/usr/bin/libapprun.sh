@@ -1,5 +1,6 @@
 # libapprun.sh — Shared functions for NABUPcAIO AppImage
 # v1.00 — Initial unified library extracted from NIA/NNS/niacoco AppRun scripts
+# v1.01 — launch_nns and launch_fuji open web UI when --config passed
 #
 # SOURCE this file from AppRun — do not execute directly.
 #
@@ -213,12 +214,20 @@ launch_nns() {
     debug_echo "Launching NNS"
     sh ./runnns "$@" &
     sleep 10
+    if printf '%s\n' "$@" | grep -q '^--config$'; then
+        debug_echo "Opening NNS web UI"
+        xdg-open http://localhost:5000
+    fi
 }
 
 launch_fuji() {
     debug_echo "Launching FujiNetCoCo server"
     sh ./runfuji "$@" &
     sleep 10
+    if printf '%s\n' "$@" | grep -q '^--config$'; then
+        debug_echo "Opening FujiNet web UI"
+        xdg-open http://localhost:8000
+    fi
 }
 
 # ---------------------------------------------------------------------------

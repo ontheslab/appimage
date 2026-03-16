@@ -7,14 +7,16 @@
 # v1.00f - Minor formatting and comment updates
 # v1.00g - Moved debug parsing before output
 # v1.01  - Unified NABUPcAIO build
+# v1.02  - --config flag runs NIA in GUI mode (without -n)
 
 set -e
 
 # Global variables
-app_version="1.01 - Unified NABUPcAIO"
+app_version="1.02 - --config GUI mode"
 home_dir="$HOME"
 nia_data_dir="$home_dir/Documents/NABU Internet Adapter"
 DEBUG=false
+CONFIG=false
 
 # Function to handle debug echoes
 debug_echo() {
@@ -26,7 +28,8 @@ debug_echo() {
 # Parse command-line options
 for arg in "$@"; do
     case "$arg" in
-        --debug) DEBUG=true ;;
+        --debug)  DEBUG=true ;;
+        --config) CONFIG=true ;;
     esac
 done
 
@@ -39,5 +42,10 @@ debug_echo "Data Dir: $nia_data_dir"
 # Run NIA server
 debug_echo "Changing to directory: $nia_data_dir"
 cd "$nia_data_dir"
-debug_echo "Running NIA now with '-n'..."
-./NABU-Internet-Adapter-84 -n
+if $CONFIG; then
+    debug_echo "Running NIA in GUI mode (--config)"
+    ./NABU-Internet-Adapter-84
+else
+    debug_echo "Running NIA in background mode (-n)"
+    ./NABU-Internet-Adapter-84 -n
+fi
