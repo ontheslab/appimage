@@ -7,6 +7,7 @@ This folder contains release notes and documentation for all AppImage builds.
 | File | Description |
 | ---- | ----------- |
 | [NABUPcAIO.md](NABUPcAIO.md) | NABUPcAIO — all-in-one build (v1.10, current) |
+| [NABUPcAIO-v110.md](NABUPcAIO-v110.md) | NABUPcAIO v1.10 release notes |
 | [NABUPcNIA.md](NABUPcNIA.md) | NABUPcNIA — current release notes (v1.00h) |
 | [NABUPcNNS.md](NABUPcNNS.md) | NABUPcNNS — current release notes (v1.01) |
 | [NABUPcTEST.md](NABUPcTEST.md) | NABUPcTEST — CoCo FujiNet experimental build (v1.101 alpha) |
