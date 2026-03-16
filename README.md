@@ -75,8 +75,7 @@ nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca hcca_remote
 ./NABUPcAIO.AppImage --coleco
 
 # Custom MAME command — connect to a server on your local network
-./NABUPcAIO.AppImage --mame nabupc -noswitchres -resolution 1024x768 \
-  -nabu_video tms9938 -hcca null_modem -bitb socket.192.168.0.10:5816
+./NABUPcAIO.AppImage --mame nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca null_modem -bitb socket.192.168.0.10:5816
 
 # Reset config to defaults
 ./NABUPcAIO.AppImage --reset
@@ -86,24 +85,19 @@ nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca hcca_remote
 
 ## Bonus Cores — Vectrex and CoCo3
 
-The bundled MAME binary also includes **Vectrex** and **CoCo3 / CoCo3h** emulation. ROM files are **not included** — place them in `~/.mamedata/roms/<system>/` before use. Use `--mame` to run these cores.
+The bundled MAME binary also includes **Vectrex** and **CoCo3 / CoCo3h** emulation. Place your own ROM files in `~/.mamedata/roms/<system>/` before use. Use `--mame` to run these cores.
 
 ### Vectrex
 
-Place `vectrex.zip` (BIOS) and any cartridge ROMs in `~/.mamedata/roms/vectrex/`:
-
 ```bash
-# Built-in Mine Storm (BIOS only)
+# Built-in Mine Storm
 ./NABUPcAIO.AppImage --mame vectrex -window -rompath ~/.mamedata/roms
 
 # With a cartridge
-./NABUPcAIO.AppImage --mame vectrex -window \
-  -rompath ~/.mamedata/roms -cart ~/.mamedata/roms/vectrex/scramble.zip
+./NABUPcAIO.AppImage --mame vectrex -window -rompath ~/.mamedata/roms -cart ~/.mamedata/roms/vectrex/scramble.zip
 ```
 
 ### CoCo3 / CoCo3h
-
-Place `coco3.rom` and `disk10.rom` in `~/.mamedata/roms/coco3/`:
 
 - `coco3` — Motorola 6809 CPU (original hardware)
 - `coco3h` — Hitachi HD6309 CPU (faster; use for HD6309 software)
@@ -113,12 +107,10 @@ Place `coco3.rom` and `disk10.rom` in `~/.mamedata/roms/coco3/`:
 ./NABUPcAIO.AppImage --mame coco3 -window -rompath ~/.mamedata/roms
 
 # With a floppy disk image
-./NABUPcAIO.AppImage --mame coco3h -window \
-  -rompath ~/.mamedata/roms -ramsize 512k \
-  -flop1 ~/Documents/coco/GUNSTAR.DSK
+./NABUPcAIO.AppImage --mame coco3h -window -rompath ~/.mamedata/roms -ramsize 512k -flop1 ~/Documents/coco/GUNSTAR.DSK
 ```
 
-For **CoCo FujiNet** (network/SD card), use `--server fuji` instead — requires `hdbdw3bc3.rom` in addition to the above. See [docs/NABUPcAIO.md](docs/NABUPcAIO.md) for full details.
+For **CoCo FujiNet** (network/SD card), use `--server fuji` instead. See [docs/NABUPcAIO.md](docs/NABUPcAIO.md) for full details.
 
 ---
 
