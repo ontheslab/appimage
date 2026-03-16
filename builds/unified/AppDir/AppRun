@@ -3,7 +3,7 @@
 # v1.01 — Added --config flag (NIA GUI mode, NNS/FujiNet web UI)
 # v1.02 — Default server changed to none (hcca_remote), added --mame flag,
 #          fixed --server <name> value leaking into MAME args
-# v1.03 — --config exits after launching server UI, does not launch MAME
+# v1.03 — --config: NIA runs GUI in foreground; NNS/FujiNet keep AppImage alive with prompt
 
 set -e
 
@@ -129,6 +129,14 @@ setup_nns
 setup_fuji
 setup_mame
 
+# Config mode — NIA GUI runs in foreground; block here until user closes it then exit
+if $CONFIG && [ "$SERVER" = "nia" ]; then
+    debug_echo "Config mode — launching NIA GUI (foreground)"
+    sh ./runserver "${mame_args[@]}"
+    kill_nia
+    exit 0
+fi
+
 # Launch selected server as background process
 case "$SERVER" in
     nia)  launch_nia "${mame_args[@]}" ;;
@@ -137,9 +145,14 @@ case "$SERVER" in
     none) debug_echo "No server selected — MAME only" ;;
 esac
 
-# Config mode — server UI only, no MAME
+# Config mode — NNS/FujiNet: server + browser are running; keep AppImage alive until done
 if $CONFIG; then
-    debug_echo "Config mode — server UI launched, exiting without MAME"
+    debug_echo "Config mode — server running, browser opened"
+    echo "Server is running. Press Enter when you are done configuring to stop and exit."
+    read -r
+    kill_nia
+    kill_nns
+    kill_fuji
     exit 0
 fi
 

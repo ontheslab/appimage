@@ -2,7 +2,7 @@
 # v1.00 — Initial unified library extracted from NIA/NNS/niacoco AppRun scripts
 # v1.01 — launch_nns and launch_fuji open web UI when --config passed
 # v1.02 — setup_mame: cp -r so coco3/ and coco3h/ ROM subdirs are copied
-# v1.03 — launch_*: disown background server so it survives script exit in --config mode
+# v1.03 — --config handling moved to AppRun; disown removed
 #
 # SOURCE this file from AppRun — do not execute directly.
 #
@@ -210,14 +210,12 @@ setup_mame() {
 launch_nia() {
     debug_echo "Launching NABU Internet Adapter server"
     sh ./runserver "$@" &
-    disown $!
     sleep 10
 }
 
 launch_nns() {
     debug_echo "Launching NNS"
     sh ./runnns "$@" &
-    disown $!
     sleep 10
     if printf '%s\n' "$@" | grep -q '^--config$'; then
         debug_echo "Opening NNS web UI"
@@ -228,7 +226,6 @@ launch_nns() {
 launch_fuji() {
     debug_echo "Launching FujiNetCoCo server"
     sh ./runfuji "$@" &
-    disown $!
     sleep 10
     if printf '%s\n' "$@" | grep -q '^--config$'; then
         debug_echo "Opening FujiNet web UI"
