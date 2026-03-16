@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+# v1.00 — NABUPcAIO unified AppImage — initial release
+
+set -e
+
+# ---------------------------------------------------------------------------
+# Global variables
+# ---------------------------------------------------------------------------
+
+app_version="1.00 - NABUPcAIO unified AppImage"
+this_dir="$(readlink -f "$(dirname "$0")")"
+home_dir="$HOME"
+nia_data_dir="$home_dir/Documents/NABU Internet Adapter"
+nns_data_dir="$home_dir/.nns"
+fuji_data_dir="$home_dir/Documents/FujiNetCoCo"
+data_dir="$home_dir/.mamedata"
+readme_file="NABUPcAIO.txt"
+DEBUG=false
+SERVER="nia"   # default server — nia | nns | fuji | none
+
+# ---------------------------------------------------------------------------
+# Source shared function library
+# ---------------------------------------------------------------------------
+
+source "$this_dir/usr/bin/libapprun.sh"
+
+# ---------------------------------------------------------------------------
+# Help — app-specific, stays in AppRun
+# ---------------------------------------------------------------------------
+
+display_help() {
+    echo -e "NABUPcAIO AppImage Help\n"
+    echo -e "AppImage Version: $app_version\n"
+    echo "Syntax:"
+    echo -e "        './NABUPcAIO.AppImage <options> <mame options>'\n"
+    echo "Options:"
+    echo -e "        --help              Display this screen and exit"
+    echo -e "        --server <name>     Server to run: nia (default), nns, fuji, none"
+    echo -e "        --fuji              Shorthand for --server fuji"
+    echo -e "        --nonia             Shorthand for --server none (no server)"
+    echo -e "        --nonns             Shorthand for --server none (no server)"
+    echo -e "        --coleco            Run built-in Coleco ROM collection (brijohn)"
+    echo -e "        --reset             Reset all configs to defaults and exit (backs up to .old)"
+    echo -e "        --debug             Enable debug output"
+    echo -e "        --about             Display the bundled readme\n"
+    echo "Servers:"
+    echo -e "        nia   NABU Internet Adapter — connects to nabu.ca retronet (DJ Sures)"
+    echo -e "        nns   NABU NetSim — local advanced simulator (GryBsh)"
+    echo -e "        fuji  CoCo FujiNet — 8-bit networking for CoCo3 (FujiNet Team)"
+    echo -e "        none  No server — MAME only, connect manually\n"
+    echo "Additional arguments are passed directly to MAME."
+    exit 0
+}
+
+# ---------------------------------------------------------------------------
+# Parse command-line options
+# ---------------------------------------------------------------------------
+
+next_is_server=false
+
+for arg in "$@"; do
+    if $next_is_server; then
+        SERVER="$arg"
+        next_is_server=false
+        continue
+    fi
+    case "$arg" in
+        --help)   display_help ;;
+        --about)  display_readme ;;
+        --reset)  reset_configs ;;
+        --debug)  DEBUG=true ;;
+        --server) next_is_server=true ;;
+        --fuji)   SERVER="fuji" ;;
+        --nonia)  SERVER="none" ;;
+        --nonns)  SERVER="none" ;;
+        --coleco) ;;  # passed through to runmame
+    esac
+done
+
+# Validate server value
+case "$SERVER" in
+    nia|nns|fuji|none) ;;
+    *)
+        echo "Error: unknown server '$SERVER'. Valid options: nia, nns, fuji, none"
+        exit 1
+        ;;
+esac
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+debug_echo "NABUPcAIO Version: $app_version"
+debug_echo "AppDir: $this_dir/usr/bin"
+debug_echo "Command line: $@"
+debug_echo "Server: $SERVER"
+
+# Kill any stale server processes from previous sessions
+kill_nia
+kill_nns
+kill_fuji
+
+# Set working directory for all relative paths (runmame, server binaries)
+cd "$this_dir/usr/bin"
+
+# Set up all user data directories
+setup_nia
+setup_nns
+setup_fuji
+setup_mame
+
+# Launch selected server as background process
+case "$SERVER" in
+    nia)  launch_nia ;;
+    nns)  launch_nns "$@" ;;
+    fuji) launch_fuji "$@" ;;
+    none) debug_echo "No server selected — MAME only" ;;
+esac
+
+# Launch MAME
+run_mame "$@"
+
+# Clean up on exit
+debug_echo "Shutting down"
+kill_nia
+kill_nns
+kill_fuji
+debug_echo "Exiting"
