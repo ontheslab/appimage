@@ -40,7 +40,7 @@ By default (no options) MAME connects directly to nabu.ca using its built-in hcc
 | `--nonns` | Shorthand for `--server none` (no server) |
 | `--mame` | MAME only — pass your own command directly (exclusive) |
 | `--coleco` | Run built-in Coleco ROM collection (brijohn) |
-| `--config` | Open server config UI (NIA: GUI window; NNS/FujiNet: web browser) |
+| `--config` | Open server config UI (NIA: GUI window, exits when closed; NNS/FujiNet: prints URL, press Enter to stop) |
 | `--reset` | Reset all configs to defaults, back up existing to `.old` |
 | `--debug` | Enable debug output |
 | `--about` | Display the bundled readme |
@@ -76,7 +76,7 @@ All folders are created automatically on first run. Use `--reset` to restore def
 # NIA server + MAME — nabu.ca session via bundled NIA
 ./NABUPcAIO.AppImage --server nia
 
-# Local NNS simulator with web UI open for config
+# NNS config — server starts, prints URL, press Enter to stop
 ./NABUPcAIO.AppImage --server nns --config
 
 # CoCo FujiNet session

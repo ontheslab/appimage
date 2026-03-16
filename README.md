@@ -45,7 +45,7 @@ All flags prefixed with `--` are handled by the AppImage and stripped before any
 | `--nonns` | Shorthand for `--server none` |
 | `--mame` | MAME only — pass a fully custom MAME command (exclusive) |
 | `--coleco` | Launch built-in Coleco ROM collection (brijohn's coleco.npz) |
-| `--config` | Open server config UI (NIA: GUI; NNS/FujiNet: web browser) |
+| `--config` | Open server config UI (NIA: GUI window, exits when closed; NNS/FujiNet: prints URL, press Enter to stop) |
 | `--reset` | Back up config folders to `.old` and regenerate defaults |
 
 Any additional arguments are passed directly to MAME.

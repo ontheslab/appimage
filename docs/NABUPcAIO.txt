@@ -58,9 +58,9 @@ Options:
   --mame              MAME only — pass your own command directly
   --coleco            Run built-in Coleco ROM collection (brijohn)
   --config            Open server config UI:
-                        NIA   — launches with GUI window
-                        NNS   — opens http://localhost:5000 in browser
-                        FujiNet — opens http://localhost:8000 in browser
+                        NIA     — GUI window, exits cleanly when closed
+                        NNS     — prints http://localhost:5000, press Enter to stop
+                        FujiNet — prints http://localhost:8000, press Enter to stop
   --reset             Reset all configs to defaults and exit
   --debug             Enable debug output
   --about             Display this file
@@ -74,11 +74,14 @@ Examples:
   ./NABUPcAIO.AppImage --server nia
     Launch NIA and MAME — nabu.ca session via bundled NIA server.
 
+  ./NABUPcAIO.AppImage --server nia --config
+    Open NIA config GUI — exits cleanly when you close the window.
+
   ./NABUPcAIO.AppImage --server nns
     Launch NNS and MAME — local simulator session.
 
   ./NABUPcAIO.AppImage --server nns --config
-    Launch NNS and open the web UI for configuration.
+    Start NNS and print the web UI URL — press Enter to stop server.
 
   ./NABUPcAIO.AppImage --server fuji
     Launch CoCo FujiNet and MAME with CoCo3.
