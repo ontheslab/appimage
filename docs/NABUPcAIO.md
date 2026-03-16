@@ -95,6 +95,73 @@ All folders are created automatically on first run. Use `--reset` to restore def
 
 ---
 
+## Bonus Cores — Vectrex and CoCo3
+
+The bundled MAME binary includes Vectrex and CoCo3 / CoCo3h emulation in addition to NABU PC. ROM files are **not included** and must be placed in `~/.mamedata/roms/<system>/` before use.
+
+Use `--mame` for all bonus core sessions — this bypasses all servers and passes your command directly to MAME.
+
+### Vectrex
+
+Required ROM files in `~/.mamedata/roms/vectrex/`:
+
+| File | Purpose |
+| ---- | ------- |
+| `vectrex.zip` | Vectrex BIOS (required) |
+| `<game>.zip` | Individual cartridge ROMs (optional) |
+
+```bash
+# Basic launch — BIOS screen / built-in Mine Storm
+./NABUPcAIO.AppImage --mame vectrex -window \
+  -rompath ~/.mamedata/roms
+
+# With a cartridge
+./NABUPcAIO.AppImage --mame vectrex -window \
+  -rompath ~/.mamedata/roms \
+  -cart ~/.mamedata/roms/vectrex/scramble.zip
+
+# Debug mode — confirm what is passed to MAME
+./NABUPcAIO.AppImage --debug --mame vectrex -window \
+  -rompath ~/.mamedata/roms
+```
+
+### CoCo3 and CoCo3h
+
+Two CoCo3 variants are available:
+
+| Core | CPU | Use when |
+| ---- | --- | -------- |
+| `coco3` | Motorola 6809 (original) | General use |
+| `coco3h` | Hitachi HD6309 (faster) | HD6309-specific software |
+
+Required ROM files in `~/.mamedata/roms/coco3/`:
+
+| File | Purpose |
+| ---- | ------- |
+| `coco3.rom` | CoCo3 BASIC/OS ROM (required) |
+| `disk10.rom` | Disk BASIC ROM (required for disk use) |
+
+```bash
+# Basic launch — BASIC prompt, no disk
+./NABUPcAIO.AppImage --mame coco3 -window \
+  -rompath ~/.mamedata/roms
+
+# With a floppy disk image (.DSK)
+./NABUPcAIO.AppImage --mame coco3h -window \
+  -rompath ~/.mamedata/roms -ramsize 512k \
+  -flop1 ~/Documents/coco/GUNSTAR.DSK
+
+# With multiple disk images
+./NABUPcAIO.AppImage --mame coco3h -window \
+  -rompath ~/.mamedata/roms -ramsize 512k \
+  -flop1 ~/Documents/coco/DISK1.DSK \
+  -flop2 ~/Documents/coco/DISK2.DSK
+```
+
+> For CoCo FujiNet (network/SD card access), use `--server fuji` instead — see the Quick Start section. FujiNet requires `hdbdw3bc3.rom` in addition to `coco3.rom` and `disk10.rom`.
+
+---
+
 ## Platform
 
 Linux 64-bit. Targeted at Steam Deck. Tested on Linux Mint and WSL2.

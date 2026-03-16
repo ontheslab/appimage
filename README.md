@@ -8,8 +8,9 @@ Each AppImage is a self-contained executable — no installation, no external de
 
 ## AppImage Variants
 
-| AppImage | Bundled Server | Status |
-| -------- | -------------- | ------ |
+| AppImage | Bundled Servers | Status |
+| -------- | --------------- | ------ |
+| **NABUPcAIO.AppImage** | NIA + NNS + CoCo FujiNet — all three in one, choose at launch | Current |
 | **NABUPcNIA.AppImage** | NABU Internet Adapter (NIA) by DJ Sures — connects to nabu.ca retronet | Current |
 | **NABUPcNNS.AppImage** | NABU NetSim (NNS) by Nick Daniels (GryBsh) — advanced local simulator | Current |
 | **NABUPcTEST.AppImage** | CoCo FujiNet server — 8-bit networking for CoCo3 via localhost | Alpha |
@@ -21,74 +22,103 @@ Download from [Releases](https://github.com/ontheslab/appimage/releases).
 ## Quick Start
 
 ```bash
-chmod +x NABUPcNIA.AppImage
-./NABUPcNIA.AppImage
+chmod +x NABUPcAIO.AppImage
+./NABUPcAIO.AppImage
 ```
 
-That's it. The bundled server starts automatically in the background, MAME launches in 80-column mode connected to it, and cleans up on exit.
+By default MAME connects directly to nabu.ca using its built-in `hcca_remote` connection — no server setup needed. Add `--server nia` or `--server nns` to use a bundled server instead.
 
 ---
 
-## Options
+## NABUPcAIO Options
 
-All three AppImages share the same flag structure. Flags prefixed with `--` are handled by the AppImage and stripped before anything is passed to MAME.
+All flags prefixed with `--` are handled by the AppImage and stripped before anything is passed to MAME.
 
 | Flag | Effect |
 | ---- | ------ |
 | `--help` | Show available options and exit |
 | `--about` | Display the bundled release notes and exit |
 | `--debug` | Show all script and MAME command output |
-| `--nonia` | Skip NIA server (NABUPcNIA only) |
-| `--nonns` | Skip NNS server (NABUPcNNS only) |
+| `--server <name>` | Server: `none` (default), `nia`, `nns`, `fuji` |
+| `--fuji` | Shorthand for `--server fuji` |
+| `--nonia` | Shorthand for `--server none` |
+| `--nonns` | Shorthand for `--server none` |
+| `--mame` | MAME only — pass a fully custom MAME command (exclusive) |
 | `--coleco` | Launch built-in Coleco ROM collection (brijohn's coleco.npz) |
-| `--fuji` | Launch CoCo FujiNet server and MAME as coco3 (NABUPcTEST only) |
-| `--reset` | Back up config folders to `.old` and regenerate defaults, then exit |
+| `--config` | Open server config UI (NIA: GUI; NNS/FujiNet: web browser) |
+| `--reset` | Back up config folders to `.old` and regenerate defaults |
 
 Any additional arguments are passed directly to MAME.
 
-**Default MAME command (when no options given):**
+**Default MAME command (no options):**
 
 ```text
-nabupc -resolution 1024x768 -nabu_video tms9938 -hcca null_modem -bitb socket.127.0.0.1:5816
+nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca hcca_remote
 ```
 
 ### Examples
 
 ```bash
-# Connect to an external server instead of the bundled one
-./NABUPcNIA.AppImage --nonia nabupc -window -nabu_video tms9938 -hcca null_modem -bitb socket.192.168.0.211:5816
+# Default — MAME connects directly to nabu.ca via hcca_remote
+./NABUPcAIO.AppImage
 
-# Run with debug output to see exactly what's being passed to MAME
-./NABUPcNIA.AppImage --debug
+# NIA server + MAME
+./NABUPcAIO.AppImage --server nia
 
-# Launch the built-in Coleco ROM collection (no server needed)
-./NABUPcNIA.AppImage --nonia --coleco
+# Local NNS simulator with web UI
+./NABUPcAIO.AppImage --server nns --config
 
-# Load a local NPZ file
-./NABUPcNNS.AppImage --nonns --debug nabupc -window -hcca hcca_local -npz ~/Documents/nabu/Digger.npz
+# CoCo FujiNet session (requires CoCo3 ROMs — see below)
+./NABUPcAIO.AppImage --server fuji
 
-# Reset config to defaults (run once after upgrading from an older AppImage)
-./NABUPcNIA.AppImage --reset
+# Built-in Coleco ROM collection
+./NABUPcAIO.AppImage --coleco
+
+# Custom MAME command — connect to a server on your local network
+./NABUPcAIO.AppImage --mame nabupc -noswitchres -resolution 1024x768 \
+  -nabu_video tms9938 -hcca null_modem -bitb socket.192.168.0.10:5816
+
+# Reset config to defaults
+./NABUPcAIO.AppImage --reset
 ```
 
 ---
 
-## Additional Cores (CoCo3, Vectrex, FujiNet)
+## Bonus Cores — Vectrex and CoCo3
 
-The MAME binary includes **CoCo3** (6809 & 6309), **Vectrex**, and in the TEST build, **CoCo FujiNet** support. ROM files for these are **not included** and must be placed in `~/.mamedata/roms/<system>/`.
+The bundled MAME binary also includes **Vectrex** and **CoCo3 / CoCo3h** emulation. ROM files are **not included** — place them in `~/.mamedata/roms/<system>/` before use. Use `--mame` to run these cores.
+
+### Vectrex
+
+Place `vectrex.zip` (BIOS) and any cartridge ROMs in `~/.mamedata/roms/vectrex/`:
 
 ```bash
-# Vectrex
-./NABUPcNIA.AppImage --nonia --debug vectrex -window -rompath ~/.mamedata/roms
+# Built-in Mine Storm (BIOS only)
+./NABUPcAIO.AppImage --mame vectrex -window -rompath ~/.mamedata/roms
 
-# CoCo3 with disk image
-./NABUPcNIA.AppImage --nonia --debug coco3h -rompath ~/.mamedata/roms -ramsize 512k -flop1 ~/Documents/coco/GUNSTAR.DSK
-
-# CoCo FujiNet (TEST build — requires coco3.rom, disk10.rom, hdbdw3bc3.rom in ~/.mamedata/roms/coco3/)
-./NABUPcTEST.AppImage --fuji
+# With a cartridge
+./NABUPcAIO.AppImage --mame vectrex -window \
+  -rompath ~/.mamedata/roms -cart ~/.mamedata/roms/vectrex/scramble.zip
 ```
 
-See [docs/NABUPcTEST.md](docs/NABUPcTEST.md) for full CoCo FujiNet setup and usage.
+### CoCo3 / CoCo3h
+
+Place `coco3.rom` and `disk10.rom` in `~/.mamedata/roms/coco3/`:
+
+- `coco3` — Motorola 6809 CPU (original hardware)
+- `coco3h` — Hitachi HD6309 CPU (faster; use for HD6309 software)
+
+```bash
+# BASIC prompt, no disk
+./NABUPcAIO.AppImage --mame coco3 -window -rompath ~/.mamedata/roms
+
+# With a floppy disk image
+./NABUPcAIO.AppImage --mame coco3h -window \
+  -rompath ~/.mamedata/roms -ramsize 512k \
+  -flop1 ~/Documents/coco/GUNSTAR.DSK
+```
+
+For **CoCo FujiNet** (network/SD card), use `--server fuji` instead — requires `hdbdw3bc3.rom` in addition to the above. See [docs/NABUPcAIO.md](docs/NABUPcAIO.md) for full details.
 
 ---
 
@@ -102,9 +132,9 @@ All user data is created automatically on first run and rebuilt if deleted.
 | `~/.mamedata/roms` | ROM files (user-supplied for CoCo3/Vectrex) |
 | `~/.mamedata/disks` | Disk images |
 | `~/Pictures/nabupc` | NABU PC screenshots |
-| `~/Documents/NABU Internet Adapter/` | NIA binary and config (NIA builds) |
-| `~/.nns/` | NNS runtime data (NNS builds) |
-| `~/Documents/FujiNetCoCo/` | FujiNet data and SD card files (TEST build) |
+| `~/Documents/NABU Internet Adapter/` | NIA binary and config (upgradeable) |
+| `~/.nns/` | NNS runtime data |
+| `~/Documents/FujiNetCoCo/` | FujiNet data and SD card files |
 
 **NIA** can be updated independently by dropping a new binary into `~/Documents/NABU Internet Adapter/`.
 
@@ -116,13 +146,13 @@ The NIA `config.xml` is automatically updated if you're running on a non-Steam D
 
 ## Steam Deck Controller Setup
 
-MAME uses keyboard/joystick mapping from GTAMP's Windows distribution. You will need to set up a custom controller layout in the Steam Deck menus to map keys like **ESC**, **F3**, **F12**, and **TAB**. The MAME UI (TAB key) is active by default.
+MAME uses keyboard/joystick mapping from GTAMP's Windows distribution. Set up a custom controller layout in the Steam Deck menus to map keys like **ESC**, **F3**, **F12**, and **TAB**. The MAME UI (TAB key) is active by default.
 
 ---
 
 ## Docs
 
-Full release notes for each build are in the [docs/](docs/) folder.
+Full release notes and detailed usage for each build are in the [docs/](docs/) folder.
 
 ---
 

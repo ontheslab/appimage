@@ -92,6 +92,69 @@ Examples:
 All standard MAME command line options are passed directly to MAME.
 
 
+Bonus Cores — Vectrex and CoCo3
+=================================
+
+The bundled MAME binary includes Vectrex and CoCo3 / CoCo3h emulation
+in addition to NABU PC. ROM files are NOT included and must be placed
+in ~/.mamedata/roms/<system>/ before use.
+
+Use --mame for all bonus core sessions — this bypasses all servers and
+passes your command directly to MAME.
+
+
+Vectrex
+-------
+
+Required ROM files in ~/.mamedata/roms/vectrex/:
+  vectrex.zip   — Vectrex BIOS (required)
+  (game ROMs as individual .zip files, one per cartridge)
+
+Basic launch (BIOS screen / built-in Mine Storm game):
+  ./NABUPcAIO.AppImage --mame vectrex -window \
+    -rompath ~/.mamedata/roms
+
+With a cartridge:
+  ./NABUPcAIO.AppImage --mame vectrex -window \
+    -rompath ~/.mamedata/roms \
+    -cart ~/.mamedata/roms/vectrex/scramble.zip
+
+Debug mode to confirm what is being passed to MAME:
+  ./NABUPcAIO.AppImage --debug --mame vectrex -window \
+    -rompath ~/.mamedata/roms
+
+
+CoCo3 and CoCo3h
+-----------------
+
+Two CoCo3 variants are available:
+  coco3   — Motorola 6809 CPU (original hardware)
+  coco3h  — Hitachi HD6309 CPU (faster; use for HD6309 software)
+
+Required ROM files in ~/.mamedata/roms/coco3/:
+  coco3.rom    — CoCo3 BASIC/OS ROM (required)
+  disk10.rom   — Disk BASIC ROM (required for disk use)
+
+Basic launch (BASIC prompt, no disk):
+  ./NABUPcAIO.AppImage --mame coco3 -window \
+    -rompath ~/.mamedata/roms
+
+With a floppy disk image (.DSK):
+  ./NABUPcAIO.AppImage --mame coco3h -window \
+    -rompath ~/.mamedata/roms -ramsize 512k \
+    -flop1 ~/Documents/coco/GUNSTAR.DSK
+
+With multiple disk images:
+  ./NABUPcAIO.AppImage --mame coco3h -window \
+    -rompath ~/.mamedata/roms -ramsize 512k \
+    -flop1 ~/Documents/coco/DISK1.DSK \
+    -flop2 ~/Documents/coco/DISK2.DSK
+
+Note: For CoCo FujiNet (network/SD card), use --server fuji instead.
+See the FujiNet section above and the CoCo ROM note there — it requires
+hdbdw3bc3.rom in addition to coco3.rom and disk10.rom.
+
+
 This is an AppImage — a self-contained 64-bit Linux x86 executable.
 All required libraries are included.
 
