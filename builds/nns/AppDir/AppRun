@@ -1,0 +1,225 @@
+#!/usr/bin/env bash
+# v1.00 - Release AppImage
+# v1.01 - Updated NNS with latest MAME Build (New Scripting) - Intangybles
+# v1.01a - Tiny Updated to fix typos and readme file - Intangybles
+# v1.01b - Config files update only - Intangybles
+# NNS - v1.3.4-release5 (c) 2022-2025 Nick Daniels
+
+set -e
+
+# Global variables
+app_version="v1.01b - NNS (v1.3.4-release5) with latest MAME Build (New cfg & Scripting)"
+this_dir="$(readlink -f "$(dirname "$0")")"
+home_dir="$HOME"
+nns_data_dir="$home_dir/.nns"
+nns_prog_dir="$home_dir/Documents/nns"
+data_dir="$home_dir/.mamedata"
+DEBUG=false
+
+# Function to handle debug echoes
+debug_echo() {
+    if $DEBUG; then
+        echo "$@"
+    fi
+}
+
+# Function to display help and exit
+display_help() {
+    echo -e "NABU MAME & NetSim (NNS) AppImage Help\n"
+    echo -e "AppImage Version: $app_version\n"
+    echo "Syntax:"
+    echo -e "        './NABUPcNNS.AppImage <options>'\n"
+    echo "Options:"
+    echo -e "        --help   - Display this screen and exit"
+    echo -e "        --nonns  - Do not run NNS (GryBsh)"
+    echo -e "        --coleco - Run internal Coleco ROMs in NABU coleco.npz (brijohn)"
+    echo -e "        --reset  - Reset MAME configs and NNS (.nns) data to defaults and exit (Backup .old)"
+    echo -e "        --debug  - Enable debug output"
+    echo -e "        --about  - Display the readme file\n"
+    echo "Additional arguments are passed directly to mame."
+    exit 0
+}
+
+# Function to display the readme file and exit
+display_readme() {
+    more "$this_dir/usr/bin/NABUPcNNS.txt"
+    exit 0
+}
+
+# Function to kill any running NNS processes
+kill_nns() {
+    debug_echo "Testing for running NNS processes"
+    nns_id=$(ps | grep 'nns' | awk '{print $1}')
+    if [ -n "$nns_id" ]; then
+        debug_echo "Found running NNS: $nns_id"
+        kill "$nns_id"
+        debug_echo "Running NNS - Killed"
+    else
+        debug_echo "None found"
+    fi
+}
+
+# Function to set up NNS directories and files
+setup_nns() {
+    debug_echo "Home Path is: $home_dir"
+    debug_echo "Setting up NNS"
+    debug_echo "Data Path: $nns_data_dir"
+
+    # Create Documents directory if needed
+    if ! test -d "$home_dir/Documents"; then
+        debug_echo "Creating new Documents directory"
+        mkdir "$home_dir/Documents"
+    fi
+
+    # Create NNS Prog directory if needed
+#    if ! test -d "$nns_prog_dir"; then
+#        debug_echo "Creating new NNS Prog directory"
+#        mkdir "$nns_prog_dir"
+#    fi
+
+    # Copy NNS files if appsettings.json is missing (Copies Current Version Saved in AppImage)
+#    if ! test -f "$nns_data_dir/appsettings.json"; then
+#        debug_echo "New install: copying NNS files"
+#        cp "$this_dir/usr/bin/nns/"* "$nns_data_dir"
+#        debug_echo "$(ls -la "$nns_data_dir")"
+#    fi
+}
+
+# Function to set up MAME directories and files
+setup_mame() {
+    debug_echo "Setting up MAME"
+    debug_echo "Data Path: $data_dir"
+
+    # Create MAME data directory if needed
+    if ! test -d "$data_dir"; then
+        debug_echo "Creating new MAME data directory"
+        mkdir "$data_dir"
+    fi
+
+    # Create cfg subdirectory if needed
+    if ! test -d "$data_dir/cfg"; then
+        debug_echo "Creating new MAME config directory"
+        mkdir "$data_dir/cfg"
+    fi
+
+    # Copy nabupc.cfg if missing
+    if ! test -f "$data_dir/cfg/nabupc.cfg"; then
+        debug_echo "Copying new MAME config files"
+        cp "$this_dir/usr/bin/cfg/"*.* "$data_dir/cfg"
+    fi
+
+    # Create roms subdirectory if needed and copy initial roms (if any)
+    if ! test -d "$data_dir/roms"; then
+        debug_echo "Creating new MAME roms directory"
+        mkdir "$data_dir/roms"
+        debug_echo "Copying initial rom files"
+        cp "$this_dir/usr/bin/roms/"* "$data_dir/roms" 2>/dev/null || true
+    fi
+
+    # Create disks subdirectory if needed and copy initial disks (if any)
+    if ! test -d "$data_dir/disks"; then
+        debug_echo "Creating new MAME disks directory"
+        mkdir "$data_dir/disks"
+        debug_echo "Copying initial disk files"
+        cp "$this_dir/usr/bin/disks/"* "$data_dir/disks" 2>/dev/null || true
+    fi
+
+    # Create Pictures directory if needed
+    if ! test -d "$home_dir/Pictures"; then
+        debug_echo "Creating new Pictures directory"
+        mkdir "$home_dir/Pictures"
+    fi
+
+    # Create nabupc snapshot subdirectory if needed
+    if ! test -d "$home_dir/Pictures/nabupc"; then
+        debug_echo "Creating new nabupc snapshot directory"
+        mkdir "$home_dir/Pictures/nabupc"
+    fi
+
+    # Move old snapshots if present (any saved with old AppImage)
+    if test -d "$data_dir/snap/nabupc"; then
+        debug_echo "Copying snapshot folder to Pictures"
+        cp "$data_dir/snap/nabupc/"*.* "$home_dir/Pictures/nabupc"
+        debug_echo "Removing old snapshots folder"
+        rm -rf "$data_dir/snap/nabupc"
+    fi
+}
+
+# Function to reset configs and exit - Renames old Folders and runs setup functions
+reset_configs() {
+    echo -e "Resetting NNS DATA and MAME configs to defaults"
+
+    # Backup NNS data directory
+    if test -d "$nns_data_dir"; then
+        echo -e "Backing up existing NNS data directory to $nns_data_dir.old"
+        mv "$nns_data_dir" "$nns_data_dir.old"
+    fi
+
+    # Backup MAME data directory
+    if test -d "$data_dir"; then
+        echo -e "Backing up existing MAME data directory to $data_dir.old"
+        mv "$data_dir" "$data_dir.old"
+    fi
+
+    # Re-setup NNS and MAME as if new install
+    setup_nns
+    setup_mame
+
+    echo -e "Configs reset to defaults. Old configs backed up to .old directories.\n"
+    exit 0
+}
+
+# Function to launch NNS - Runs as a separate Background Process
+launch_nns() {
+    debug_echo "Launching NNS"
+    sh ./runnns "$@" &
+    sleep 10  # Allow time for NNS to start
+}
+
+# Function to run MAME
+run_mame() {
+    debug_echo "Running MAME with arguments: $@"
+    ./runmame "$@"
+}
+
+# Main script body
+
+# Parse command-line options and set flags etc
+NONNS=false
+
+for arg in "$@"; do
+    case "$arg" in
+        --help) display_help ;;
+        --nonns) NONNS=true ;;
+        --coleco) ;;  # Passed to runmame
+        --reset) reset_configs ;;
+        --debug) DEBUG=true ;;
+        --about) display_readme ;;
+    esac
+done
+
+debug_echo "AppImage Version: $app_version"
+debug_echo "$this_dir/usr/bin"
+debug_echo "Command line given: $@"
+
+# Always kill any existing NNS processes on start
+kill_nns
+
+# Setup NNS and MAME - creates or replaces as required
+cd "$this_dir/usr/bin"
+setup_nns
+setup_mame
+
+# Launch NNS unless --nonns is specified
+if ! $NONNS; then
+    launch_nns "$@"
+fi
+
+# Run MAME with all passed arguments
+run_mame "$@"
+
+# Clean up: Kill running NNS on exit
+sleep 1
+debug_echo "Killing NNS jobs"
+kill_nns
+echo "Exiting"

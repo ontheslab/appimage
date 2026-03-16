@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# V1.04 - Release AppImage for Bundled Server
+# V1.04a - Window Size & Config update
+# V1.04b - Modularised with debug support
+# V1.04e - Moved debug parsing before output
+# V1.04f - Fixed --coleco detection logic
+
+set -e
+
+# Global variables
+app_version="1.04f - Fixed coleco detection"
+home_dir="$HOME"
+data_dir="$home_dir/.mamedata"
+DEBUG=false
+
+# Function to handle debug echoes
+debug_echo() {
+    if $DEBUG; then
+        echo "$@"
+    fi
+}
+
+# Function to set MAME options
+set_mame_options() {
+    local clean_cl coleco_flag
+    # Check for --coleco by iterating over arguments
+    coleco_flag=false
+    for arg in "$@"; do
+        if [[ "$arg" == "--coleco" ]]; then
+            coleco_flag=true
+            break
+        fi
+    done
+
+    # Set default options based on --coleco
+    if $coleco_flag; then
+        # Default settings for local Coleco games
+        default_options="nabupc -window -resolution 1024x768 -hcca hcca_local -npz nabu/coleco.npz"
+    else
+        # Default settings for internal NIA
+        default_options="nabupc -window -resolution 1024x768 -nabu_video tms9938 -hcca null_modem -bitb socket.127.0.0.1:5816"
+    fi
+
+    # Clean command-line arguments by removing all -- options
+    clean_cl=$(printf "%s\n" "$@" | grep -v '^--' | xargs)
+    debug_echo "Clean Command Line: $clean_cl"
+
+    # Set options based on whether clean command-line arguments exist
+    if [ -z "$clean_cl" ]; then
+        options="-cfg_directory ${data_dir}/cfg -snapshot_directory ${home_dir}/Pictures ${default_options}"
+    else
+        options="-cfg_directory ${data_dir}/cfg -snapshot_directory ${home_dir}/Pictures ${clean_cl}"
+    fi
+}
+
+# Function to run MAME
+run_mame() {
+    debug_echo "Arguments supplied - options = $options"
+    debug_echo "Home Path is: $home_dir"
+    sleep 2
+    ./mame $options 2> /dev/null
+#    sleep 5
+}
+
+# Parse command-line options
+for arg in "$@"; do
+    case "$arg" in
+        --debug) DEBUG=true ;;
+        --coleco) ;;  # Handled in set_mame_options
+    esac
+done
+
+# Main script execution
+debug_echo "Running MAME script in Actual Path $PWD"
+debug_echo "MAME Script Version: $app_version"
+
+# Set up MAME options and run
+set_mame_options "$@"
+run_mame

@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# V0.01 - Pre-Release AppImage
+# v1.00b - First full beta version
+# v1.00c - Working Tester
+# v1.00d - Added debug support
+# v1.00e - Updated for consistency with AppRun and runmame
+# v1.00f - Minor formatting and comment updates
+# v1.00g - Moved debug parsing before output - only displays when run manually not as task
+
+# v1.101 - First attempt to get CoCo FujiNet running in the AppImage
+
+set -e
+
+# Global variables
+app_version="1.101 (alpha tester) - First attempt to get CoCo FujiNet running in the AppImage"
+home_dir="$HOME"
+this_dir="$(readlink -f "$(dirname "$0")")"
+fuji_data_dir="$home_dir/Documents/FujiNetCoCo"
+DEBUG=false
+
+# Function to handle debug echoes
+debug_echo() {
+    if $DEBUG; then
+        echo "$@"
+    fi
+}
+
+# Function to run fuji server
+run_fuji() {
+    debug_echo "Changing to directory: $fuji_data_dir"
+    cd "$fuji_data_dir"
+    debug_echo "Running fuji now ..."
+    if $DEBUG; then
+       sh ./run-fujinet &
+    else
+       sh ./run-fujinet > /dev/null &
+    fi
+}
+
+# Parse command-line options
+for arg in "$@"; do
+    case "$arg" in
+        --debug) DEBUG=true ;;
+    esac
+done
+
+# Main script execution
+debug_echo "Running fuji script in Actual Path $PWD"
+debug_echo "fuji Script Version: $app_version"
+debug_echo "Home Path is: $home_dir"
+debug_echo "This Directory: $this_dir"
+
+# Run fuji server
+run_fuji

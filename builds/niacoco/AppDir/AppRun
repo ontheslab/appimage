@@ -1,0 +1,317 @@
+#!/usr/bin/env bash
+# v0.01 - Pre-Release AppImage
+# v1.00b - First beta full release
+# v1.00c - Second beta full release
+# v1.00d - ROM & Config Updates
+# v1.00d3 - Tester
+# v1.00d4 - Modularised script with functions and --debug support
+# v1.00e - Note --coleco handling (passed to runmame)
+# v1.00f - Added --reset option for config reset
+# v1.00g - Added roms and disks setup for additional systems
+# v1.00h - External (first beta release) tester - So I can keep track
+# v1.01a - External (alpha release) tester - config updates - So I can keep track
+
+# v1.101 - First attempt to get CoCo FujiNet running in the AppImage
+
+set -e
+
+# Global variables
+app_version="1.101 (alpha tester) - First attempt to get CoCo FujiNet running in the AppImage"
+this_dir="$(readlink -f "$(dirname "$0")")"
+home_dir="$HOME"
+nia_data_dir="$home_dir/Documents/NABU Internet Adapter"
+fuji_data_dir="$home_dir/Documents/FujiNetCoCo"
+data_dir="$home_dir/.mamedata"
+cmd_line="$@"
+DEBUG=false
+
+# Function to handle debug echoes
+debug_echo() {
+    if $DEBUG; then
+        echo "$@"
+    fi
+}
+
+# Function to display help and exit
+display_help() {
+    echo -e "NABU NIA AppImage Help\n"
+    echo -e "AppImage Version: $app_version\n"
+    echo "Syntax:"
+    echo -e "        './NABUPcNIA.AppImage <options>'\n"
+    echo "Options:"
+    echo -e "        --help   - Display this screen and exit"
+    echo -e "        --nonia  - Do not run NIA (also clears any running NIA tasks) (DJSures)"
+    echo -e "        --coleco - Run internal Coleco ROMs in NABU coleco.npz (brijohn)"
+    echo -e "        --reset  - Reset NIA and MAME configs to defaults and exit (Backup .old)"
+    echo -e "        --fuji   - Launch the CoCoFujiNet server & CoCo MAME"
+    echo -e "        --debug  - Enable debug output"
+    echo -e "        --about  - Display the readme file\n"
+    echo "Additional arguments are passed directly to mame."
+    exit 0
+}
+
+# Function to display the readme file and exit
+display_readme() {
+    more "$this_dir/usr/bin/NABUPcNIA.txt"
+    exit 0
+}
+
+# Function to kill any running NIA processes
+kill_nia() {
+    debug_echo "Testing for running NIA processes"
+    nia_id=$(ps aux | grep '[N]ABU-Internet-Adapter-84' | awk '{print $2}')
+    if [ -n "$nia_id" ]; then
+        debug_echo "Found running NIA: $nia_id"
+        kill "$nia_id"
+        debug_echo "Running NIA - Killed"
+    else
+        debug_echo "None found"
+    fi
+}
+
+# Function to kill any running FujiNet processes
+kill_fuji() {
+    debug_echo "Testing for running FujiNet processes"
+    fuji_id=$(ps | grep 'fujinet' | awk '{print $1}')
+    if [ -n "$fuji_id" ]; then
+        debug_echo "Found running FujiNet: $fuji_id"
+        kill "$fuji_id"
+        debug_echo "Running FujiNet - Killed"
+    else
+        debug_echo "None found"
+    fi
+}
+
+# Function to set up NIA directories and files
+setup_nia() {
+    debug_echo "Home Path is: $home_dir"
+    debug_echo "Setting up NABU Internet Adapter"
+    debug_echo "Data Path: $nia_data_dir"
+
+    # Create Documents directory if needed
+    if ! test -d "$home_dir/Documents"; then
+        debug_echo "Creating new Documents directory"
+        mkdir "$home_dir/Documents"
+    fi
+
+    # Create NIA data directory if needed
+    if ! test -d "$nia_data_dir"; then
+        debug_echo "Creating new NIA data directory"
+        mkdir "$nia_data_dir"
+    fi
+
+    # Copy NIA files if config.xml is missing (Copies Current Version Saved in AppImage)
+    if ! test -f "$nia_data_dir/config.xml"; then
+        debug_echo "New install: copying NIA files"
+        cp "$this_dir/usr/bin/NABU Internet Adapter/"* "$nia_data_dir"
+        # Create libdl.so link
+        cd "$nia_data_dir"
+        ln -s /lib/x86_64-linux-gnu/libdl.so.2 libdl.so
+        debug_echo "$(ls -la "$nia_data_dir")"
+    fi
+
+    # Update config.xml if it contains /home/deck and HOME differs
+    # This should set the HOME path correctly in the config file if not on SteamDeck
+    target_file="$nia_data_dir/config.xml"
+    if grep -q "/home/deck" "$target_file"; then
+        if [[ "$HOME" != "/home/deck" ]]; then
+            debug_echo "Updating home path in $target_file from /home/deck to $HOME"
+            sed -i "s|/home/deck|$HOME|g" "$target_file"
+        else
+            debug_echo "Home path matches /home/deck — no changes needed"
+        fi
+    else
+        debug_echo "No /home/deck entry found in $target_file"
+    fi
+
+    cd "$this_dir/usr/bin"
+}
+
+# Function to set up FujiNet directories and files
+setup_fuji() {
+    debug_echo "Home Path is: $home_dir"
+    debug_echo "Setting up CoCo FujiNet folder"
+    debug_echo "Data Path: $fuji_data_dir"
+
+    # Create Documents directory if needed
+    if ! test -d "$home_dir/Documents"; then
+        debug_echo "Creating new Documents directory"
+        mkdir "$home_dir/Documents"
+    fi
+
+    # Create FujiNet directory if needed
+    if ! test -d "$fuji_data_dir"; then
+        debug_echo "Creating new FujiNetCoCo data directory"
+        mkdir "$fuji_data_dir"
+    fi
+
+    # Copy FujiNet files if fnconfig.ini is missing (Copies Current Version Saved in AppImage)
+    if ! test -f "$fuji_data_dir/fnconfig.ini"; then
+        debug_echo "New install: copying FujiNet files"
+        cp -r "$this_dir/usr/bin/FujiNetCoCo/"* "$fuji_data_dir"
+        debug_echo "$(ls -la "$fuji_data_dir")"
+    fi
+
+    cd "$this_dir/usr/bin"
+}
+
+# Function to set up MAME directories and files
+setup_mame() {
+    debug_echo "Setting up MAME"
+    debug_echo "Data Path: $data_dir"
+
+    # Create MAME data directory if needed
+    if ! test -d "$data_dir"; then
+        debug_echo "Creating new MAME data directory"
+        mkdir "$data_dir"
+    fi
+
+    # Create cfg subdirectory if needed
+    if ! test -d "$data_dir/cfg"; then
+        debug_echo "Creating new MAME config directory"
+        mkdir "$data_dir/cfg"
+    fi
+
+    # Copy nabupc.cfg if missing
+    if ! test -f "$data_dir/cfg/nabupc.cfg"; then
+        debug_echo "Copying new MAME config files"
+        cp "$this_dir/usr/bin/cfg/"*.* "$data_dir/cfg"
+    fi
+
+    # Create roms subdirectory if needed and copy initial roms (if any)
+    if ! test -d "$data_dir/roms"; then
+        debug_echo "Creating new MAME roms directory"
+        mkdir "$data_dir/roms"
+        debug_echo "Copying initial rom files"
+        cp "$this_dir/usr/bin/roms/"* "$data_dir/roms" 2>/dev/null || true
+    fi
+
+    # Create disks subdirectory if needed and copy initial disks (if any)
+    if ! test -d "$data_dir/disks"; then
+        debug_echo "Creating new MAME disks directory"
+        mkdir "$data_dir/disks"
+        debug_echo "Copying initial disk files"
+        cp "$this_dir/usr/bin/disks/"* "$data_dir/disks" 2>/dev/null || true
+    fi
+
+    # Create Pictures directory if needed
+    if ! test -d "$home_dir/Pictures"; then
+        debug_echo "Creating new Pictures directory"
+        mkdir "$home_dir/Pictures"
+    fi
+
+    # Create nabupc snapshot subdirectory if needed
+    if ! test -d "$home_dir/Pictures/nabupc"; then
+        debug_echo "Creating new nabupc snapshot directory"
+        mkdir "$home_dir/Pictures/nabupc"
+    fi
+
+    # Move old snapshots if present (any saved with old AppImage)
+    if test -d "$data_dir/snap/nabupc"; then
+        debug_echo "Copying snapshot folder to Pictures"
+        cp "$data_dir/snap/nabupc/"*.* "$home_dir/Pictures/nabupc"
+        debug_echo "Removing old snapshots folder"
+        rm -rf "$data_dir/snap/nabupc"
+    fi
+}
+
+# Function to reset configs and exits - Renames old Folders and runs setup functions
+reset_configs() {
+    echo -e "Resetting NIA MAME FujiNetCoCo configs to defaults"
+
+    # Backup NIA data directory
+    if test -d "$nia_data_dir"; then
+        echo -e "Backing up existing NIA data directory to $nia_data_dir.old"
+        mv "$nia_data_dir" "$nia_data_dir.old"
+    fi
+
+    # Backup FujiNetCoCo data directory
+    if test -d "$fuji_data_dir"; then
+        echo -e "Backing up existing FujiNetCoCo data directory to $fuji_data_dir.old"
+        mv "$fuji_data_dir" "$fuji_data_dir.old"
+    fi
+
+    # Backup MAME data directory
+    if test -d "$data_dir"; then
+        echo -e "Backing up existing MAME data directory to $data_dir.old"
+        mv "$data_dir" "$data_dir.old"
+    fi
+
+    # Re-setup NIA and MAME as if new install
+    setup_nia
+    setup_fuji
+    setup_mame
+
+    echo -e "Configs reset to defaults. Old configs backed up to .old directories.\n"
+    exit 0
+}
+
+# Function to launch NIA - Runs as a separate Background Process
+launch_nia() {
+    debug_echo "Launching NABU Internet Adapter server"
+    sh ./runserver &
+    sleep 10  # Allow time for NIA to start
+}
+
+# Function to launch FujiNetCoCo - Runs as a separate Background Process
+launch_fuji() {
+    debug_echo "Launching FujiNetCoCo server with: $@"
+    sh ./runfuji "$@" &
+    sleep 10  # Allow time for FujiNetCoCo to start
+}
+
+# Function to run MAME
+run_mame() {
+    debug_echo "Running MAME with arguments: $@"
+    ./runmame "$@"
+}
+
+# Main script body
+
+# Parse command-line options and set flags etc
+NONIA=false
+NOFUJI=true
+
+for arg in "$@"; do
+    case "$arg" in
+        --help) display_help ;;
+        --nonia) NONIA=true ;;
+        --coleco) ;;  # Passed to runmame
+        --fuji) NONIA=true; NOFUJI=false ;; # Set NONIA and NOFUJI pass to runmame
+        --reset) reset_configs ;;
+        --debug) DEBUG=true ;;
+        --about) display_readme ;;
+    esac
+done
+
+debug_echo "AppImage Version: $app_version"
+debug_echo "$this_dir/usr/bin"
+debug_echo "Command line given: $@"
+
+# Always kill any existing NIA & FujiNetCoCo processes on start
+kill_nia
+kill_fuji
+
+# Setup NIA, MAME & FujiNetCoCo - creates or replaces as required
+setup_nia
+setup_fuji
+setup_mame
+
+# Launch NIA unless --nonia is specified
+if ! $NONIA; then
+    launch_nia
+fi
+
+# Launch FujiNet if --fuji is specified
+if ! $NOFUJI; then
+    launch_fuji "$@"
+fi
+
+# Run MAME with all passed arguments
+run_mame "$@"
+
+# Clean up: Kill NIA on exit
+debug_echo "Killing NIA or FujiNetCoCo jobs"
+kill_nia
+kill_fuji
+debug_echo "Exiting"

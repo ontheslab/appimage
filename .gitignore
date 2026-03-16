@@ -1,5 +1,6 @@
-# Claude Code guidance file (local development only)
+# Local development files (not for public repo)
 CLAUDE.md
+DEVLOG.md
 
 # Built AppImages and zip archives
 *.AppImage

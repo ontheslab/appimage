@@ -1,0 +1,36 @@
+#! /usr/bin/env bash
+# V1.00 - GryBsh
+# v1.01 - Updates for new AppImage - Inangybles
+
+set -e
+
+# Global variables
+home_dir="$HOME"
+nns_data_dir="$home_dir/.nns"
+DEBUG=false
+
+# Function to handle debug echoes
+debug_echo() {
+    if $DEBUG; then
+        echo "$@"
+    fi
+}
+
+# Parse command-line options
+for arg in "$@"; do
+    case "$arg" in
+        --debug) DEBUG=true ;;
+    esac
+done
+
+debug_echo "Running NNS script in Actual Path $PWD"
+
+if $DEBUG; then
+    ./nns
+else
+    ./nns >/dev/null 2>&1
+fi
+
+#./nns $@
+#sleep 10
+#xdg-open http://localhost:5000
