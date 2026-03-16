@@ -9,11 +9,12 @@
 # V1.101  Added --fuji flag and CoCo3 FujiNet default launch
 # V1.06   Unified - merged all variants, removed redundant sleep
 # V1.07   Default changed to hcca_remote (nabu.ca direct, no bundled server)
+# V1.08   Added --localserver flag for nia/nns localhost connection
 
 set -e
 
 # Global variables
-app_version="1.07 - hcca_remote default"
+app_version="1.08 - --localserver flag"
 home_dir="$HOME"
 data_dir="$home_dir/.mamedata"
 DEBUG=false
@@ -27,18 +28,18 @@ debug_echo() {
 
 # Function to set MAME options
 set_mame_options() {
-    local clean_cl coleco_flag fuji_flag
+    local clean_cl coleco_flag fuji_flag localserver_flag
     coleco_flag=false
     fuji_flag=false
+    localserver_flag=false
 
-    # Check for --coleco and --fuji flags
+    # Check for mode flags injected by AppRun
     for arg in "$@"; do
-        if [[ "$arg" == "--coleco" ]]; then
-            coleco_flag=true
-        fi
-        if [[ "$arg" == "--fuji" ]]; then
-            fuji_flag=true
-        fi
+        case "$arg" in
+            --coleco)      coleco_flag=true ;;
+            --fuji)        fuji_flag=true ;;
+            --localserver) localserver_flag=true ;;
+        esac
     done
 
     # Set default MAME command based on mode
@@ -48,6 +49,9 @@ set_mame_options() {
     elif $fuji_flag; then
         # CoCo3 with FujiNet HDB-DOS
         default_options="coco3 -window -rompath ~/.mamedata/roms -ramsize 512k -ext multi -ext:multi:slot4 fdc -cart5 ~/.mamedata/roms/coco3/hdbdw3bc3.rom"
+    elif $localserver_flag; then
+        # Bundled server running on localhost (nia or nns)
+        default_options="nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca null_modem -bitb socket.127.0.0.1:5816"
     else
         # Default — MAME connects directly to nabu.ca via built-in hcca_remote
         default_options="nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca hcca_remote"
@@ -75,9 +79,10 @@ run_mame() {
 # Parse command-line options
 for arg in "$@"; do
     case "$arg" in
-        --debug) DEBUG=true ;;
-        --coleco) ;;  # Handled in set_mame_options
-        --fuji)   ;;  # Handled in set_mame_options
+        --debug)       DEBUG=true ;;
+        --coleco)      ;;  # Handled in set_mame_options
+        --fuji)        ;;  # Handled in set_mame_options
+        --localserver) ;;  # Handled in set_mame_options
     esac
 done
 

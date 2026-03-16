@@ -96,6 +96,13 @@ case "$SERVER" in
         ;;
 esac
 
+# Tell runmame which MAME default to use based on selected server
+case "$SERVER" in
+    nia|nns) mame_args+=("--localserver") ;;   # localhost null_modem
+    fuji)    ;;                                  # --fuji already in mame_args
+    none)    ;;                                  # hcca_remote default
+esac
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
