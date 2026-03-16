@@ -1,6 +1,6 @@
 # NABUPcAIO — All-In-One AppImage
 
-**Version 1.02** — NABU PC MAME with NIA, NNS and CoCo FujiNet in a single AppImage for Steam Deck & Linux.
+**Version 1.03** — NABU PC MAME with NIA, NNS and CoCo FujiNet in a single AppImage for Steam Deck & Linux.
 
 The all-in-one AppImage bundles MAME and all three supported NABU servers together. Choose your server at launch — no separate downloads or installs required.
 
