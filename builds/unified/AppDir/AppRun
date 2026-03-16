@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # v1.00 — NABUPcAIO unified AppImage — initial release
 # v1.01 — Added --config flag (NIA GUI mode, NNS/FujiNet web UI)
+# v1.02 — Default server changed to none (hcca_remote), added --mame flag,
+#          fixed --server <name> value leaking into MAME args
 
 set -e
 
@@ -8,7 +10,7 @@ set -e
 # Global variables
 # ---------------------------------------------------------------------------
 
-app_version="1.01 - NABUPcAIO unified AppImage"
+app_version="1.02 - NABUPcAIO unified AppImage"
 this_dir="$(readlink -f "$(dirname "$0")")"
 home_dir="$HOME"
 nia_data_dir="$home_dir/Documents/NABU Internet Adapter"
@@ -17,7 +19,7 @@ fuji_data_dir="$home_dir/Documents/FujiNetCoCo"
 data_dir="$home_dir/.mamedata"
 readme_file="NABUPcAIO.txt"
 DEBUG=false
-SERVER="nia"   # default server — nia | nns | fuji | none
+SERVER="none"   # default server — none | nia | nns | fuji
 
 # ---------------------------------------------------------------------------
 # Source shared function library
@@ -36,47 +38,52 @@ display_help() {
     echo -e "        './NABUPcAIO.AppImage <options> <mame options>'\n"
     echo "Options:"
     echo -e "        --help              Display this screen and exit"
-    echo -e "        --server <name>     Server to run: nia (default), nns, fuji, none"
+    echo -e "        --server <name>     Server to run: none (default), nia, nns, fuji"
     echo -e "        --fuji              Shorthand for --server fuji"
     echo -e "        --nonia             Shorthand for --server none (no server)"
     echo -e "        --nonns             Shorthand for --server none (no server)"
+    echo -e "        --mame              MAME only — pass custom command directly (exclusive)"
     echo -e "        --coleco            Run built-in Coleco ROM collection (brijohn)"
     echo -e "        --config            Open server config UI (NIA: GUI window; NNS/FujiNet: web UI)"
     echo -e "        --reset             Reset all configs to defaults and exit (backs up to .old)"
     echo -e "        --debug             Enable debug output"
     echo -e "        --about             Display the bundled readme\n"
     echo "Servers:"
+    echo -e "        none  No server — MAME connects directly to nabu.ca via hcca_remote (default)"
     echo -e "        nia   NABU Internet Adapter — connects to nabu.ca retronet (DJ Sures)"
     echo -e "        nns   NABU NetSim — local advanced simulator (GryBsh)"
-    echo -e "        fuji  CoCo FujiNet — 8-bit networking for CoCo3 (FujiNet Team)"
-    echo -e "        none  No server — MAME only, connect manually\n"
+    echo -e "        fuji  CoCo FujiNet — 8-bit networking for CoCo3 (FujiNet Team)\n"
     echo "Additional arguments are passed directly to MAME."
     exit 0
 }
 
 # ---------------------------------------------------------------------------
-# Parse command-line options
+# Parse command-line options — build mame_args excluding --server <value>
+# so the server name does not leak through to MAME
 # ---------------------------------------------------------------------------
 
 next_is_server=false
+mame_args=()
 
 for arg in "$@"; do
     if $next_is_server; then
         SERVER="$arg"
         next_is_server=false
-        continue
+        continue   # do not add server name to mame_args
     fi
     case "$arg" in
         --help)   display_help ;;
         --about)  display_readme ;;
         --reset)  reset_configs ;;
-        --debug)  DEBUG=true ;;
-        --server) next_is_server=true ;;
-        --fuji)   SERVER="fuji" ;;
-        --nonia)  SERVER="none" ;;
-        --nonns)  SERVER="none" ;;
-        --config) ;;  # passed through to launch functions
-        --coleco) ;;  # passed through to runmame
+        --debug)  DEBUG=true ;   mame_args+=("$arg") ;;
+        --server) next_is_server=true ;;         # value consumed next iteration
+        --fuji)   SERVER="fuji" ;  mame_args+=("$arg") ;;
+        --nonia)  SERVER="none" ;  mame_args+=("$arg") ;;
+        --nonns)  SERVER="none" ;  mame_args+=("$arg") ;;
+        --mame)   SERVER="none" ;  mame_args+=("$arg") ;;
+        --config) mame_args+=("$arg") ;;
+        --coleco) mame_args+=("$arg") ;;
+        *)        mame_args+=("$arg") ;;  # bare MAME args pass through
     esac
 done
 
@@ -95,7 +102,8 @@ esac
 
 debug_echo "NABUPcAIO Version: $app_version"
 debug_echo "AppDir: $this_dir/usr/bin"
-debug_echo "Command line: $@"
+debug_echo "Command line: $*"
+debug_echo "MAME args: ${mame_args[*]}"
 debug_echo "Server: $SERVER"
 
 # Kill any stale server processes from previous sessions
@@ -114,14 +122,14 @@ setup_mame
 
 # Launch selected server as background process
 case "$SERVER" in
-    nia)  launch_nia ;;
-    nns)  launch_nns "$@" ;;
-    fuji) launch_fuji "$@" ;;
+    nia)  launch_nia "${mame_args[@]}" ;;
+    nns)  launch_nns "${mame_args[@]}" ;;
+    fuji) launch_fuji "${mame_args[@]}" ;;
     none) debug_echo "No server selected — MAME only" ;;
 esac
 
 # Launch MAME
-run_mame "$@"
+run_mame "${mame_args[@]}"
 
 # Clean up on exit
 debug_echo "Shutting down"

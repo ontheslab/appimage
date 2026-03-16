@@ -8,11 +8,12 @@
 # V1.05a  Build for NNS AppImage - minor update
 # V1.101  Added --fuji flag and CoCo3 FujiNet default launch
 # V1.06   Unified - merged all variants, removed redundant sleep
+# V1.07   Default changed to hcca_remote (nabu.ca direct, no bundled server)
 
 set -e
 
 # Global variables
-app_version="1.06 - Unified runmame"
+app_version="1.07 - hcca_remote default"
 home_dir="$HOME"
 data_dir="$home_dir/.mamedata"
 DEBUG=false
@@ -48,8 +49,8 @@ set_mame_options() {
         # CoCo3 with FujiNet HDB-DOS
         default_options="coco3 -window -rompath ~/.mamedata/roms -ramsize 512k -ext multi -ext:multi:slot4 fdc -cart5 ~/.mamedata/roms/coco3/hdbdw3bc3.rom"
     else
-        # Default NABU PC 80col via server on localhost
-        default_options="nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca null_modem -bitb socket.127.0.0.1:5816"
+        # Default — MAME connects directly to nabu.ca via built-in hcca_remote
+        default_options="nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca hcca_remote"
     fi
 
     # Strip all AppImage -- flags before passing to MAME
