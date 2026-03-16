@@ -1,6 +1,7 @@
 # Local development files (not for public repo)
 CLAUDE.md
 DEVLOG.md
+PLAN.md
 
 # Built AppImages and zip archives
 *.AppImage
