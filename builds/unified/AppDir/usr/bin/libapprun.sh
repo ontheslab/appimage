@@ -218,8 +218,7 @@ launch_nns() {
     sh ./runnns "$@" &
     sleep 10
     if printf '%s\n' "$@" | grep -q '^--config$'; then
-        debug_echo "Opening NNS web UI"
-        xdg-open http://localhost:5000
+        echo "NNS is running. Open your web browser and go to: http://localhost:5000"
     fi
 }
 
@@ -228,8 +227,7 @@ launch_fuji() {
     sh ./runfuji "$@" &
     sleep 10
     if printf '%s\n' "$@" | grep -q '^--config$'; then
-        debug_echo "Opening FujiNet web UI"
-        xdg-open http://localhost:8000
+        echo "FujiNet is running. Open your web browser and go to: http://localhost:8000"
     fi
 }
 
