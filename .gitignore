@@ -1,0 +1,41 @@
+# Claude Code guidance file (local development only)
+CLAUDE.md
+
+# Built AppImages and zip archives
+*.AppImage
+*.AppImage.zip
+*.zip
+
+# Previous release archives
+archive/
+
+# linuxdeploy-generated library and doc trees
+builds/*/AppDir/usr/lib/
+builds/*/AppDir/usr/share/
+
+# Large pre-compiled binaries (MAME, NNS, NIA, FujiNet)
+builds/*/AppDir/usr/bin/mame
+builds/*/AppDir/usr/bin/nns
+builds/*/AppDir/usr/bin/nabu
+builds/*/AppDir/usr/bin/libSystem.IO.Ports.Native.so
+builds/*/AppDir/usr/bin/NABU Internet Adapter/
+builds/*/AppDir/usr/bin/FujiNetCoCo/
+
+# MAME asset trees (bundled with MAME binary, not authored here)
+builds/*/AppDir/usr/bin/bgfx/
+builds/*/AppDir/usr/bin/plugins/
+
+# ROM files, disk images, and screenshots
+builds/*/AppDir/usr/bin/roms/
+builds/*/AppDir/usr/bin/disks/
+builds/*/AppDir/usr/bin/snap/
+
+# NNS runtime data and web assets
+builds/*/AppDir/usr/bin/wwwroot/
+builds/*/AppDir/usr/bin/logs/
+builds/*/AppDir/usr/bin/Files/
+builds/*/AppDir/usr/bin/NABUs/
+builds/*/AppDir/usr/bin/Packages/
+
+# Backup/old script versions created during development
+*.old
