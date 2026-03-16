@@ -1,6 +1,7 @@
 # libapprun.sh — Shared functions for NABUPcAIO AppImage
 # v1.00 — Initial unified library extracted from NIA/NNS/niacoco AppRun scripts
 # v1.01 — launch_nns and launch_fuji open web UI when --config passed
+# v1.02 — setup_mame: cp -r so coco3/ and coco3h/ ROM subdirs are copied
 #
 # SOURCE this file from AppRun — do not execute directly.
 #
@@ -172,7 +173,7 @@ setup_mame() {
         debug_echo "Creating new MAME roms directory"
         mkdir "$data_dir/roms"
         debug_echo "Copying initial rom files"
-        cp "$this_dir/usr/bin/roms/"* "$data_dir/roms" 2>/dev/null || true
+        cp -r "$this_dir/usr/bin/roms/"* "$data_dir/roms" 2>/dev/null || true
     fi
 
     if ! test -d "$data_dir/disks"; then
