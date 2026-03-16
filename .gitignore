@@ -15,6 +15,11 @@ archive/
 builds/*/AppDir/usr/lib/
 builds/*/AppDir/usr/share/
 
+# linuxdeploy-generated AppDir root files (icon symlink, .DirIcon, desktop symlink)
+builds/*/AppDir/NABUPc.png
+builds/*/AppDir/.DirIcon
+builds/*/AppDir/*.desktop
+
 # Large pre-compiled binaries (MAME, NNS, NIA, FujiNet)
 builds/*/AppDir/usr/bin/mame
 builds/*/AppDir/usr/bin/nns
@@ -32,12 +37,18 @@ builds/*/AppDir/usr/bin/roms/
 builds/*/AppDir/usr/bin/disks/
 builds/*/AppDir/usr/bin/snap/
 
-# NNS runtime data and web assets
+# NNS runtime data, web assets, and config
 builds/*/AppDir/usr/bin/wwwroot/
 builds/*/AppDir/usr/bin/logs/
 builds/*/AppDir/usr/bin/Files/
 builds/*/AppDir/usr/bin/NABUs/
 builds/*/AppDir/usr/bin/Packages/
+builds/*/AppDir/usr/bin/keymaps/
+builds/*/AppDir/usr/bin/appsettings.json
+
+# MAME cfg and ini (seeded from existing builds by assemble-aio.sh)
+builds/*/AppDir/usr/bin/cfg/
+builds/*/AppDir/usr/bin/ini/
 
 # Backup/old script versions created during development
 *.old
