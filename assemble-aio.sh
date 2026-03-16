@@ -1,6 +1,9 @@
 #! /usr/bin/env bash
-# assemble-aio.sh — Populate builds/unified/AppDir/usr/bin with binaries and assets
-# Safe to re-run: removes and re-copies each item so the result is always fresh.
+# assemble-aio.sh — DEPRECATED — do not run as part of the normal build chain.
+# This script overwrites builds/unified/AppDir/ from the individual builds,
+# destroying any edits made directly to the unified AppDir.
+# Kept for reference only — use if rebuilding the unified AppDir from scratch.
+# Normal build: edit builds/unified/AppDir/ directly, then run baio.sh.
 # Run from /home/xbox/appimage/
 
 set -e
