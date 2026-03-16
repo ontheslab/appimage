@@ -47,8 +47,11 @@ builds/*/AppDir/usr/bin/keymaps/
 builds/*/AppDir/usr/bin/appsettings.json
 
 # MAME cfg and ini (seeded from existing builds by assemble-aio.sh)
-builds/*/AppDir/usr/bin/cfg/
-builds/*/AppDir/usr/bin/ini/
+builds/unified/AppDir/usr/bin/cfg/
+builds/unified/AppDir/usr/bin/ini/
+
+# Bundled readme (master in docs/, copied by assemble-aio.sh)
+builds/unified/AppDir/usr/bin/NABUPcAIO.txt
 
 # Backup/old script versions created during development
 *.old

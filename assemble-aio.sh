@@ -89,4 +89,8 @@ ln -sf "NABUPc.png" "builds/unified/AppDir/.DirIcon"
 echo "  NABUPc.png (hicolor + AppDir root symlink + .DirIcon)"
 
 echo ""
+echo "Bundled readme:"
+copy_item "NABUPcAIO.txt" "docs/NABUPcAIO.txt" "$UNIFIED/NABUPcAIO.txt"
+
+echo ""
 echo "Assembly complete. Run baio.sh to build NABUPcAIO.AppImage."
