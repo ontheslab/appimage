@@ -3,6 +3,7 @@
 # v1.01 — Added --config flag (NIA GUI mode, NNS/FujiNet web UI)
 # v1.02 — Default server changed to none (hcca_remote), added --mame flag,
 #          fixed --server <name> value leaking into MAME args
+# v1.03 — --config exits after launching server UI, does not launch MAME
 
 set -e
 
@@ -10,7 +11,7 @@ set -e
 # Global variables
 # ---------------------------------------------------------------------------
 
-app_version="1.02 - NABUPcAIO unified AppImage"
+app_version="1.03 - NABUPcAIO unified AppImage"
 this_dir="$(readlink -f "$(dirname "$0")")"
 home_dir="$HOME"
 nia_data_dir="$home_dir/Documents/NABU Internet Adapter"
@@ -19,6 +20,7 @@ fuji_data_dir="$home_dir/Documents/FujiNetCoCo"
 data_dir="$home_dir/.mamedata"
 readme_file="NABUPcAIO.txt"
 DEBUG=false
+CONFIG=false
 SERVER="none"   # default server — none | nia | nns | fuji
 
 # ---------------------------------------------------------------------------
@@ -81,7 +83,7 @@ for arg in "$@"; do
         --nonia)  SERVER="none" ;  mame_args+=("$arg") ;;
         --nonns)  SERVER="none" ;  mame_args+=("$arg") ;;
         --mame)   SERVER="none" ;  mame_args+=("$arg") ;;
-        --config) mame_args+=("$arg") ;;
+        --config) CONFIG=true ; mame_args+=("$arg") ;;
         --coleco) mame_args+=("$arg") ;;
         *)        mame_args+=("$arg") ;;  # bare MAME args pass through
     esac
@@ -134,6 +136,12 @@ case "$SERVER" in
     fuji) launch_fuji "${mame_args[@]}" ;;
     none) debug_echo "No server selected — MAME only" ;;
 esac
+
+# Config mode — server UI only, no MAME
+if $CONFIG; then
+    debug_echo "Config mode — server UI launched, exiting without MAME"
+    exit 0
+fi
 
 # Launch MAME
 run_mame "${mame_args[@]}"
