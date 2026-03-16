@@ -1,16 +1,20 @@
 NABU PC MAME - All-In-One (AIO) AppImage Build for Steam Deck & Linux
 ======================================================================
 
-Version 1.01 - NABUPcAIO
+Version 1.02 - NABUPcAIO
 
 The all-in-one AppImage bundles NABU PC MAME with all three supported
 servers in a single executable. Choose your server at launch with the
 --server flag — no separate downloads or installs required.
 
+By default (no options) MAME connects directly to nabu.ca using its
+built-in hcca_remote connection — no bundled server needed.
+
+
 Bundled servers:
 
   NIA   NABU Internet Adapter (DJ Sures) — connects to nabu.ca retronet
-        Default server. Runs headless in the background.
+        Runs headless in the background.
 
   NNS   NABU NetSim v1.3.4-release5 (Nick Daniels / GryBsh) — local
         advanced NABU simulator with web UI at http://localhost:5000
@@ -47,10 +51,11 @@ Basic syntax:
 Options:
 
   --help              Display full help and exit
-  --server <name>     Server to run: nia (default), nns, fuji, none
+  --server <name>     Server to run: none (default), nia, nns, fuji
   --fuji              Shorthand for --server fuji
   --nonia             Shorthand for --server none (no server)
   --nonns             Shorthand for --server none (no server)
+  --mame              MAME only — pass your own command directly
   --coleco            Run built-in Coleco ROM collection (brijohn)
   --config            Open server config UI:
                         NIA   — launches with GUI window
@@ -64,22 +69,25 @@ Options:
 Examples:
 
   ./NABUPcAIO.AppImage
-    Launch NIA (default) and MAME — standard NABU retronet session.
+    MAME connects directly to nabu.ca via hcca_remote (default).
+
+  ./NABUPcAIO.AppImage --server nia
+    Launch NIA and MAME — nabu.ca session via bundled NIA server.
 
   ./NABUPcAIO.AppImage --server nns
     Launch NNS and MAME — local simulator session.
 
-  ./NABUPcAIO.AppImage --server fuji
-    Launch CoCo FujiNet and MAME with CoCo3.
-
-  ./NABUPcAIO.AppImage --server none
-    Launch MAME only — connect to your own server manually.
-
   ./NABUPcAIO.AppImage --server nns --config
     Launch NNS and open the web UI for configuration.
 
-  ./NABUPcAIO.AppImage --server none nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca null_modem -bitb socket.192.168.0.10:5816
-    Launch MAME only, connecting to a server at 192.168.0.10.
+  ./NABUPcAIO.AppImage --server fuji
+    Launch CoCo FujiNet and MAME with CoCo3.
+
+  ./NABUPcAIO.AppImage --coleco
+    Run the built-in Coleco ROM collection — no server needed.
+
+  ./NABUPcAIO.AppImage --mame nabupc -noswitchres -resolution 1024x768 -nabu_video tms9938 -hcca null_modem -bitb socket.192.168.0.10:5816
+    MAME only with a fully custom command, connecting to a local server.
 
 All standard MAME command line options are passed directly to MAME.
 
@@ -97,4 +105,4 @@ GTAMP, brijohn, LaBomb, Leo and the wider NABU community.
 Built with assistance from Claude (Anthropic) — our first adventure
 together in proper version-controlled NABU development.
 
-(NABUPcAIO v1.01)
+(NABUPcAIO v1.02)

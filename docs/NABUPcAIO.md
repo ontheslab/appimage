@@ -1,8 +1,10 @@
 # NABUPcAIO — All-In-One AppImage
 
-**Version 1.01** — NABU PC MAME with NIA, NNS and CoCo FujiNet in a single AppImage for Steam Deck & Linux.
+**Version 1.02** — NABU PC MAME with NIA, NNS and CoCo FujiNet in a single AppImage for Steam Deck & Linux.
 
 The all-in-one AppImage bundles MAME and all three supported NABU servers together. Choose your server at launch — no separate downloads or installs required.
+
+By default (no options) MAME connects directly to nabu.ca using its built-in hcca_remote connection — no bundled server needed.
 
 ---
 
@@ -10,7 +12,7 @@ The all-in-one AppImage bundles MAME and all three supported NABU servers togeth
 
 | Server | Version | Author | Description |
 | ------ | ------- | ------ | ----------- |
-| **NIA** | NABU-Internet-Adapter-84 | DJ Sures | Connects to nabu.ca retronet. Default server, runs headless. |
+| **NIA** | NABU-Internet-Adapter-84 | DJ Sures | Connects to nabu.ca retronet. Runs headless. |
 | **NNS** | v1.3.4-release5 | Nick Daniels (GryBsh) | Local advanced NABU simulator. Web UI at `http://localhost:5000` |
 | **FujiNet** | v1.5.1 | FujiNet Team | CoCo3 8-bit networking via MAME. Web UI at `http://localhost:8000` |
 
@@ -19,10 +21,10 @@ The all-in-one AppImage bundles MAME and all three supported NABU servers togeth
 ## Quick Start
 
 ```bash
-./NABUPcAIO.AppImage                    # NIA + MAME (default)
+./NABUPcAIO.AppImage                    # MAME direct to nabu.ca via hcca_remote (default)
+./NABUPcAIO.AppImage --server nia       # NIA + MAME
 ./NABUPcAIO.AppImage --server nns       # NNS + MAME
 ./NABUPcAIO.AppImage --server fuji      # CoCo FujiNet + MAME
-./NABUPcAIO.AppImage --server none      # MAME only
 ```
 
 ---
@@ -32,10 +34,11 @@ The all-in-one AppImage bundles MAME and all three supported NABU servers togeth
 | Option | Description |
 | ------ | ----------- |
 | `--help` | Display full help and exit |
-| `--server <name>` | Server to run: `nia` (default), `nns`, `fuji`, `none` |
+| `--server <name>` | Server to run: `none` (default), `nia`, `nns`, `fuji` |
 | `--fuji` | Shorthand for `--server fuji` |
-| `--nonia` | Shorthand for `--server none` |
-| `--nonns` | Shorthand for `--server none` |
+| `--nonia` | Shorthand for `--server none` (no server) |
+| `--nonns` | Shorthand for `--server none` (no server) |
+| `--mame` | MAME only — pass your own command directly (exclusive) |
 | `--coleco` | Run built-in Coleco ROM collection (brijohn) |
 | `--config` | Open server config UI (NIA: GUI window; NNS/FujiNet: web browser) |
 | `--reset` | Reset all configs to defaults, back up existing to `.old` |
@@ -67,8 +70,11 @@ All folders are created automatically on first run. Use `--reset` to restore def
 ## Examples
 
 ```bash
-# Standard retronet session via nabu.ca
+# Default — MAME connects directly to nabu.ca via hcca_remote
 ./NABUPcAIO.AppImage
+
+# NIA server + MAME — nabu.ca session via bundled NIA
+./NABUPcAIO.AppImage --server nia
 
 # Local NNS simulator with web UI open for config
 ./NABUPcAIO.AppImage --server nns --config
@@ -76,8 +82,8 @@ All folders are created automatically on first run. Use `--reset` to restore def
 # CoCo FujiNet session
 ./NABUPcAIO.AppImage --server fuji
 
-# MAME only, connect to a server on your local network
-./NABUPcAIO.AppImage --server none nabupc -noswitchres -resolution 1024x768 \
+# MAME only with fully custom command, connecting to a local server
+./NABUPcAIO.AppImage --mame nabupc -noswitchres -resolution 1024x768 \
   -nabu_video tms9938 -hcca null_modem -bitb socket.192.168.0.10:5816
 
 # Coleco ROM collection (built-in, no server needed)
