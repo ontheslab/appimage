@@ -1,0 +1,10 @@
+# Force LF line endings for all shell scripts and text files
+*.sh        text eol=lf
+AppRun      text eol=lf
+*.txt       text eol=lf
+*.md        text eol=lf
+*.json      text eol=lf
+*.cfg       text eol=lf
+*.ini       text eol=lf
+*.desktop   text eol=lf
+*.map       text eol=lf
